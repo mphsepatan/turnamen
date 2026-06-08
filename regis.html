@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendaftaran HUT RI ke-81 – Mutiara Puri Harmoni Sepatan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ===========================
+   ROOT & RESET
+=========================== */
+:root {
+  --merah: #CC0001;
+  --merah-tua: #8B0000;
+  --merah-muda: #ff4444;
+  --putih: #FFFFFF;
+  --emas: #FFD700;
+  --emas-tua: #B8860B;
+  --emas-muda: #FFF3B0;
+  --ungu: #7c3aed;
+  --ungu-muda: #c084fc;
+  --bg: #0c0c0c;
+  --border-emas: rgba(255,215,0,0.25);
+  --card: rgba(255,255,255,0.04);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  color: var(--putih);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===========================
+   FLAG STRIPE
+=========================== */
+.flag-stripe {
+  height: 7px;
+  background: linear-gradient(90deg, var(--merah) 50%, var(--putih) 50%);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+}
+
+/* ===========================
+   HERO
+=========================== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 10%, rgba(204,0,1,0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 15% 85%, rgba(139,0,0,0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 85% 90%, rgba(255,215,0,0.08) 0%, transparent 55%),
+    linear-gradient(170deg, #150000 0%, #0c0c0c 55%, #050010 100%);
+  z-index: 0;
+}
+
+/* Particle stars */
+.stars { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--emas);
+  animation: twinkle var(--dur, 3s) var(--delay, 0s) infinite alternate ease-in-out;
+}
+@keyframes twinkle {
+  from { opacity: 0.05; transform: scale(0.6); }
+  to   { opacity: 0.9;  transform: scale(1.4); }
+}
+
+/* Decorative rings */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,215,0,0.06);
+  animation: spinRing var(--spd,60s) linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+.hero-content { position: relative; z-index: 2; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--merah), var(--merah-tua));
+  border: 1.5px solid var(--emas);
+  border-radius: 100px;
+  padding: 7px 22px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; letter-spacing: 4px;
+  color: var(--emas);
+  margin-bottom: 20px;
+  box-shadow: 0 0 24px rgba(255,215,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+  animation: fadeDown 0.8s ease both;
+}
+
+@keyframes fadeDown {
+  from { opacity:0; transform: translateY(-20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.garuda {
+  font-size: clamp(60px, 12vw, 90px);
+  animation: floatGaruda 5s ease-in-out infinite, fadeDown 0.6s ease both;
+  filter: drop-shadow(0 0 40px rgba(255,215,0,0.55));
+  display: block; margin-bottom: 8px;
+}
+@keyframes floatGaruda {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-14px) rotate(2deg); }
+}
+
+.hero-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(80px, 22vw, 180px);
+  line-height: 0.85;
+  letter-spacing: 6px;
+  background: linear-gradient(180deg, #fff 0%, var(--emas) 45%, #cc5500 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 6px 30px rgba(255,215,0,0.35));
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-ri {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 4vw, 30px);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  animation: fadeUp 0.8s 0.4s ease both;
+}
+
+.hero-lokasi {
+  margin-top: 14px;
+  font-size: clamp(12px, 2.5vw, 15px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--emas);
+  animation: fadeUp 0.8s 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.ornament-line {
+  display: flex; align-items: center; gap: 10px;
+  margin: 28px auto;
+  max-width: 200px;
+  animation: fadeUp 0.8s 0.7s ease both;
+}
+.ornament-line::before, .ornament-line::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, transparent, var(--emas), transparent);
+}
+.ornament-line span { color: var(--emas); font-size: 16px; }
+
+.hero-cta {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--merah), #e00);
+  border: 2px solid var(--emas);
+  border-radius: 12px;
+  padding: 14px 36px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 4px;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 8px 32px rgba(204,0,1,0.45);
+  transition: all 0.3s;
+  animation: fadeUp 0.8s 0.8s ease both;
+}
+.hero-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(204,0,1,0.55); }
+
+/* ===========================
+   FORM SECTION
+=========================== */
+.form-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 20px 80px;
+}
+
+.sec-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px; letter-spacing: 4px;
+  color: var(--emas);
+  text-align: center; margin-bottom: 6px;
+}
+.sec-sub {
+  text-align: center;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  margin-bottom: 36px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border-emas);
+  border-radius: 22px;
+  padding: 40px 36px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Steps indicator */
+.steps {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 36px;
+  justify-content: center;
+}
+.step-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  flex: 1; max-width: 120px;
+}
+.step-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,215,0,0.2);
+  color: rgba(255,255,255,0.35);
+  transition: all 0.4s;
+}
+.step-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.25);
+  text-align: center; transition: all 0.4s;
+}
+.step-line {
+  flex: 1; height: 2px; max-width: 60px;
+  background: rgba(255,215,0,0.12);
+  margin-bottom: 20px;
+  transition: all 0.4s;
+}
+.step-item.active .step-circle {
+  background: var(--merah);
+  border-color: var(--emas);
+  color: white;
+  box-shadow: 0 0 16px rgba(204,0,1,0.5);
+}
+.step-item.active .step-label { color: var(--emas); }
+.step-item.done .step-circle {
+  background: rgba(255,215,0,0.15);
+  border-color: var(--emas);
+  color: var(--emas);
+}
+.step-item.done .step-label { color: rgba(255,215,0,0.6); }
+.step-line.done { background: rgba(255,215,0,0.4); }
+
+/* Form groups */
+.fg { margin-bottom: 22px; }
+
+label.lbl {
+  display: block;
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1.8px;
+  color: var(--emas);
+  margin-bottom: 8px;
+}
+label.lbl .req { color: var(--merah-muda); margin-left: 2px; }
+
+input[type="text"], input[type="tel"] {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,215,0,0.18);
+  border-radius: 11px;
+  padding: 13px 16px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 600;
+  outline: none;
+  transition: all 0.3s;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus, input[type="tel"]:focus {
+  border-color: var(--emas);
+  background: rgba(255,215,0,0.06);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.1);
+}
+input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 3px rgba(255,68,68,0.12) !important; }
+
+.err-txt {
+  display: none; margin-top: 5px;
+  font-size: 12px; font-weight: 700;
+  color: #ff8080;
+}
+.err-txt.show { display: block; }
+
+/* Lomba hint */
+.lomba-hint { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 10px; line-height: 1.5; }
+.lomba-hint strong { color: var(--emas); }
+
+/* Lomba pills - now checkbox */
+.lomba-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.lomba-pill { position: relative; }
+.lomba-pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+.lomba-pill label {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: 18px 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid rgba(255,215,0,0.12);
+  border-radius: 14px;
+  cursor: pointer; transition: all 0.3s;
+  text-align: center;
+  text-transform: none; letter-spacing: 0;
+  font-size: 13px; font-weight: 800;
+  color: rgba(255,255,255,0.45);
+  position: relative;
+}
+.lomba-pill label .lp-icon { font-size: 32px; line-height: 1; }
+.lomba-pill label .lp-name { font-size: 12px; line-height: 1.3; }
+/* checkmark badge pojok kanan atas */
+.lomba-pill label::after {
+  content: '';
+  position: absolute; top: 8px; right: 8px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,215,0,0.25);
+  background: transparent;
+  transition: all 0.3s;
+  font-size: 11px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  color: #000;
+}
+.lomba-pill input:checked + label::after {
+  content: '✓';
+  background: var(--emas);
+  border-color: var(--emas);
+}
+.lomba-pill input:checked + label {
+  border-color: var(--emas);
+  background: rgba(255,215,0,0.1);
+  color: var(--emas);
+  box-shadow: 0 0 22px rgba(255,215,0,0.2);
+}
+.lomba-pill label:hover { border-color: rgba(255,215,0,0.35); background: rgba(255,215,0,0.05); }
+
+/* Summary lomba yang dipilih */
+.lomba-selected {
+  display: none; margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(255,215,0,0.07);
+  border: 1px solid rgba(255,215,0,0.2);
+  border-radius: 10px;
+  font-size: 13px; font-weight: 700; color: var(--emas);
+}
+.lomba-selected.show { display: block; }
+
+/* Mobile Legend role */
+.ml-box {
+  display: none; margin-top: 22px;
+  animation: slideIn 0.35s ease both;
+}
+.ml-box.on { display: block; }
+@keyframes slideIn {
+  from { opacity:0; transform: translateY(-12px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.ml-inner {
+  background: linear-gradient(135deg, rgba(40,10,80,0.7), rgba(10,5,30,0.8));
+  border: 1.5px solid rgba(124,58,237,0.4);
+  border-radius: 14px;
+  padding: 20px 20px 16px;
+}
+.ml-head {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px; letter-spacing: 2.5px;
+  color: var(--ungu-muda); margin-bottom: 3px;
+}
+.ml-hint {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  margin-bottom: 14px; line-height: 1.5;
+}
+.ml-hint strong { color: var(--emas); }
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.role-item { position: relative; }
+.role-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+.role-item label {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 12px 4px;
+  background: rgba(255,255,255,0.04);
+  border: 2px solid rgba(124,58,237,0.18);
+  border-radius: 10px;
+  cursor: pointer; transition: all 0.25s;
+  text-transform: none; letter-spacing: 0;
+  font-size: 11px; font-weight: 800;
+  color: rgba(255,255,255,0.4); text-align: center;
+}
+.role-item label .ri { font-size: 22px; }
+.role-item input:checked + label {
+  border-color: var(--ungu-muda);
+  background: rgba(124,58,237,0.22);
+  color: #e9d5ff;
+  box-shadow: 0 0 16px rgba(192,132,252,0.3);
+}
+.role-item label:hover { border-color: rgba(124,58,237,0.45); background: rgba(124,58,237,0.1); }
+.role-item input:disabled + label { opacity: 0.3; cursor: not-allowed; }
+
+.role-counter {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 800;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  color: var(--ungu-muda);
+  transition: all 0.3s;
+}
+.role-counter.ok {
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.35);
+  color: #86efac;
+}
+.role-counter.over {
+  background: rgba(204,0,1,0.15);
+  border-color: rgba(204,0,1,0.35);
+  color: #fca5a5;
+}
+
+/* ===========================
+   SUBMIT BUTTON
+=========================== */
+.btn-submit {
+  width: 100%; margin-top: 32px;
+  padding: 17px;
+  background: linear-gradient(135deg, #e00, var(--merah), var(--merah-tua));
+  border: 2px solid var(--emas);
+  border-radius: 13px;
+  color: white;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 5px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 8px 32px rgba(204,0,1,0.4);
+}
+.btn-submit::after {
+  content:'';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s;
+}
+.btn-submit:hover::after { left: 140%; }
+.btn-submit:hover { transform: translateY(-3px); box-shadow: 0 14px 42px rgba(204,0,1,0.55); }
+.btn-submit:disabled {
+  opacity: 0.6; cursor: not-allowed;
+  transform: none !important;
+}
+
+/* loading spinner inside btn */
+.spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===========================
+   MODAL
+=========================== */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 500; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.modal-bg.on { display: flex; }
+
+.modal {
+  background: linear-gradient(145deg, #1c0000, #0d0000, #0a0015);
+  border: 2px solid var(--emas);
+  border-radius: 24px;
+  padding: 44px 36px 36px;
+  max-width: 460px; width: 92%;
+  text-align: center;
+  animation: popIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275) both;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 60px rgba(255,215,0,0.1);
+}
+@keyframes popIn {
+  from { opacity:0; transform: scale(0.65); }
+  to   { opacity:1; transform: scale(1); }
+}
+
+.modal .mico { font-size: 68px; margin-bottom: 12px; display: block; }
+.modal .mtitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 34px; letter-spacing: 3px;
+  color: var(--emas); margin-bottom: 8px;
+}
+.modal .msub { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 10px; }
+.modal .mname {
+  font-size: 20px; font-weight: 900;
+  color: white; margin-bottom: 4px;
+}
+.modal .mblok { color: rgba(255,255,255,0.45); font-size: 13px; }
+.modal .mlomba-list { margin: 14px 0; display: flex; flex-direction: column; gap: 6px; }
+.modal .mlomba-item {
+  display: block; padding: 8px 16px;
+  background: rgba(255,215,0,0.1);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+  color: var(--emas);
+}
+.modal .mpesan {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  line-height: 1.7; margin-bottom: 24px;
+}
+.modal .mbtn {
+  padding: 13px 36px;
+  background: var(--merah);
+  border: 2px solid var(--emas);
+  border-radius: 10px;
+  color: white;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 19px; letter-spacing: 3px;
+  cursor: pointer; transition: 0.25s;
+}
+.modal .mbtn:hover { background: var(--merah-tua); transform: translateY(-2px); }
+
+/* Error modal */
+.modal-err .mtitle { color: #ff6b6b; }
+.modal-err .mico { filter: none; }
+
+/* ===========================
+   FOOTER
+=========================== */
+.footer {
+  text-align: center;
+  color: rgba(255,255,255,0.15);
+  font-size: 12px;
+  padding: 24px 20px 32px;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 500px) {
+  .card { padding: 28px 18px; }
+  .role-grid { grid-template-columns: repeat(3, 1fr); }
+  .role-item:nth-child(4),
+  .role-item:nth-child(5) { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="flag-stripe"></div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="stars" id="starCanvas"></div>
+
+  <!-- Decorative rings -->
+  <div class="ring" style="width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);--spd:80s;"></div>
+  <div class="ring" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);--spd:55s;"></div>
+
+  <div class="hero-content">
+    <span class="garuda">🦅</span>
+    <div class="badge">🎉 &nbsp; DIRGAHAYU REPUBLIK INDONESIA &nbsp; 🎉</div>
+    <div class="hero-num">HUT&nbsp;81</div>
+    <div class="hero-ri">Kemerdekaan Republik Indonesia</div>
+    <div class="hero-lokasi">📍 Mutiara Puri Harmoni &nbsp;·&nbsp; Sepatan</div>
+    <div class="ornament-line"><span>⭐</span></div>
+    <a href="#form" class="hero-cta">🏆 Daftar Lomba Sekarang</a>
+  </div>
+</section>
+
+<!-- ===== FORM ===== -->
+<section class="form-wrap" id="form">
+  <h2 class="sec-title">Form Pendaftaran</h2>
+  <p class="sec-sub">Lengkapi data diri dan pilih lomba yang ingin diikuti</p>
+
+  <div class="card">
+
+    <!-- Step indicator -->
+    <div class="steps">
+      <div class="step-item active" id="sData">
+        <div class="step-circle">1</div>
+        <div class="step-label">Data Diri</div>
+      </div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-item" id="sLomba">
+        <div class="step-circle">2</div>
+        <div class="step-label">Lomba</div>
+      </div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-item" id="sDone">
+        <div class="step-circle">✓</div>
+        <div class="step-label">Selesai</div>
+      </div>
+    </div>
+
+    <form id="regForm" novalidate>
+
+      <!-- Nama -->
+      <div class="fg">
+        <label class="lbl" for="fNama">Nama Lengkap <span class="req">*</span></label>
+        <input type="text" id="fNama" placeholder="Masukkan nama lengkap kamu" autocomplete="off">
+        <div class="err-txt" id="eNama">⚠ Nama lengkap wajib diisi</div>
+      </div>
+
+      <!-- Blok -->
+      <div class="fg">
+        <label class="lbl" for="fBlok">Blok / Nomor Rumah <span class="req">*</span></label>
+        <input type="text" id="fBlok" placeholder="Contoh: B-12 atau Blok C No. 5">
+        <div class="err-txt" id="eBlok">⚠ Blok/nomor rumah wajib diisi</div>
+      </div>
+
+      <!-- No HP -->
+      <div class="fg">
+        <label class="lbl" for="fHp">No. Handphone (WhatsApp) <span class="req">*</span></label>
+        <input type="tel" id="fHp" placeholder="Contoh: 08123456789" inputmode="numeric">
+        <div class="err-txt" id="eHp">⚠ Nomor HP wajib diisi (min 10 digit)</div>
+      </div>
+
+      <!-- Lomba - multi select -->
+      <div class="fg">
+        <label class="lbl">Jenis Perlombaan <span class="req">*</span></label>
+        <div class="lomba-hint">Boleh pilih <strong>lebih dari 1 lomba</strong> sekaligus ✅</div>
+        <div class="lomba-grid">
+          <div class="lomba-pill">
+            <input type="checkbox" name="lomba" id="lBT" value="Bulu Tangkis">
+            <label for="lBT">
+              <span class="lp-icon">🏸</span>
+              <span class="lp-name">Bulu Tangkis</span>
+            </label>
+          </div>
+          <div class="lomba-pill">
+            <input type="checkbox" name="lomba" id="lCT" value="Catur">
+            <label for="lCT">
+              <span class="lp-icon">♟️</span>
+              <span class="lp-name">Catur</span>
+            </label>
+          </div>
+          <div class="lomba-pill">
+            <input type="checkbox" name="lomba" id="lML" value="Mobile Legend">
+            <label for="lML">
+              <span class="lp-icon">🎮</span>
+              <span class="lp-name">Mobile Legend</span>
+            </label>
+          </div>
+        </div>
+        <div class="lomba-selected" id="lombaSelected">✅ Lomba: <span id="lombaSelectedText"></span></div>
+        <div class="err-txt" id="eLomba">⚠ Pilih minimal 1 lomba</div>
+      </div>
+
+      <!-- Mobile Legend Role -->
+      <div class="ml-box" id="mlBox">
+        <div class="ml-inner">
+          <div class="ml-head">⚔️ Pilih Role Mobile Legend</div>
+          <div class="ml-hint">
+            Pilih <strong>tepat 2 role</strong> yang kamu kuasai (min 2, max 2)
+          </div>
+          <div class="role-grid">
+            <div class="role-item">
+              <input type="checkbox" name="role" id="rExp" value="EXP">
+              <label for="rExp"><span class="ri">🗡️</span>EXP Lane</label>
+            </div>
+            <div class="role-item">
+              <input type="checkbox" name="role" id="rJng" value="Jungle">
+              <label for="rJng"><span class="ri">🌿</span>Jungle</label>
+            </div>
+            <div class="role-item">
+              <input type="checkbox" name="role" id="rMid" value="Middle">
+              <label for="rMid"><span class="ri">💥</span>Mid Lane</label>
+            </div>
+            <div class="role-item">
+              <input type="checkbox" name="role" id="rGld" value="Gold">
+              <label for="rGld"><span class="ri">💰</span>Gold Lane</label>
+            </div>
+            <div class="role-item">
+              <input type="checkbox" name="role" id="rRoam" value="Roam">
+              <label for="rRoam"><span class="ri">🛡️</span>Roam</label>
+            </div>
+          </div>
+          <div class="role-counter" id="roleCtr">0 / 2 role dipilih</div>
+          <div class="err-txt" id="eRole">⚠ Pilih tepat 2 role</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        🇮🇩 &nbsp; DAFTAR SEKARANG
+      </button>
+
+    </form>
+  </div>
+</section>
+
+<div class="footer">
+  HUT RI ke-81 &nbsp;·&nbsp; Mutiara Puri Harmoni Sepatan &nbsp;·&nbsp; 17 Agustus 2026
+</div>
+
+<!-- Modal Sukses -->
+<div class="modal-bg" id="modalOk">
+  <div class="modal">
+    <span class="mico">🎉</span>
+    <div class="mtitle">Pendaftaran Berhasil!</div>
+    <div class="msub">Data kamu telah tersimpan. Sampai jumpa di hari-H!</div>
+    <div class="mname" id="mNama">—</div>
+    <div class="mblok" id="mBlok">—</div>
+    <div class="mlomba" id="mLomba">—</div>
+    <div class="mpesan">🇮🇩 Merdeka! &nbsp;·&nbsp; Semoga berhasil di lombanya 💪</div>
+    <button class="mbtn" onclick="closeModal()">TUTUP</button>
+  </div>
+</div>
+
+<!-- Modal Error -->
+<div class="modal-bg" id="modalErr">
+  <div class="modal modal-err">
+    <span class="mico">⚠️</span>
+    <div class="mtitle">Gagal Mengirim</div>
+    <div class="msub" id="mErrMsg">Terjadi kesalahan. Coba lagi beberapa saat.</div>
+    <div class="mpesan" style="margin-top:10px;">Pastikan koneksi internet kamu aktif, lalu coba daftar ulang.</div>
+    <button class="mbtn" onclick="closeErrModal()">COBA LAGI</button>
+  </div>
+</div>
+
+<div class="flag-stripe"></div>
+
+<script>
+// ============================================================
+//  ⚠️  GANTI URL INI dengan URL deployment Apps Script kamu!
+//  Setelah deploy di Apps Script, copy URL-nya ke sini.
+// ============================================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-elVbi-UT-rFlsgkn9-y6qQTTarPWjtU_OJQNtueHgriHY3f505GBl-q3NITFHKyzPQ/exec";
+// ============================================================
+
+/* ----- Stars generator ----- */
+(function(){
+  const c = document.getElementById('starCanvas');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = 1 + Math.random()*2.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      width:${sz}px; height:${sz}px;
+      --dur:${2+Math.random()*4}s;
+      --delay:${Math.random()*4}s;
+    `;
+    c.appendChild(s);
+  }
+})();
+
+/* ----- Step indicator ----- */
+function setStep(n){
+  const items = ['sData','sLomba','sDone'];
+  const lines = ['sl1','sl2'];
+  items.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'step-item';
+    if(i < n) el.classList.add('done');
+    if(i === n) el.classList.add('active');
+  });
+  lines.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.className = 'step-line';
+    if(i < n) el.classList.add('done');
+  });
+}
+
+/* ----- Lomba toggle ----- */
+const lombaInputs = document.querySelectorAll('input[name="lomba"]');
+const mlBox = document.getElementById('mlBox');
+
+lombaInputs.forEach(inp => {
+  inp.addEventListener('change', () => {
+    const isML = inp.value === 'Mobile Legend';
+    mlBox.className = 'ml-box' + (isML ? ' on' : '');
+    if(!isML){
+      roleBoxes.forEach(r=>{ r.checked=false; r.disabled=false; });
+      updateRole();
+    }
+    setStep(inp.checked ? 1 : 0);
+  });
+});
+
+/* ----- Role logic ----- */
+const roleBoxes = document.querySelectorAll('input[name="role"]');
+const roleCtr   = document.getElementById('roleCtr');
+
+function updateRole(){
+  const checked = [...roleBoxes].filter(r=>r.checked);
+  const n = checked.length;
+  roleCtr.textContent = n + ' / 2 role dipilih';
+  roleCtr.className = 'role-counter' + (n===2?' ok': n>2?' over':'');
+  roleBoxes.forEach(r=>{ r.disabled = (n>=2 && !r.checked); });
+}
+
+roleBoxes.forEach(r => r.addEventListener('change', updateRole));
+
+/* ----- Validation ----- */
+function clearErrors(){
+  document.querySelectorAll('.err-field').forEach(el=>el.classList.remove('err-field'));
+  document.querySelectorAll('.err-txt').forEach(el=>el.classList.remove('show'));
+}
+
+function validate(){
+  clearErrors();
+  let ok = true;
+  const nama  = document.getElementById('fNama');
+  const blok  = document.getElementById('fBlok');
+  const hp    = document.getElementById('fHp');
+  const lomba = document.querySelector('input[name="lomba"]:checked');
+
+  if(!nama.value.trim()){
+    nama.classList.add('err-field');
+    document.getElementById('eNama').classList.add('show');
+    ok=false;
+  }
+  if(!blok.value.trim()){
+    blok.classList.add('err-field');
+    document.getElementById('eBlok').classList.add('show');
+    ok=false;
+  }
+  const hpClean = hp.value.trim().replace(/\D/g,'');
+  if(!hpClean || hpClean.length<10){
+    hp.classList.add('err-field');
+    document.getElementById('eHp').classList.add('show');
+    ok=false;
+  }
+  if(!lomba){
+    document.getElementById('eLomba').classList.add('show');
+    ok=false;
+  }
+  if(lomba && lomba.value==='Mobile Legend'){
+    const checked = [...roleBoxes].filter(r=>r.checked);
+    if(checked.length !== 2){
+      document.getElementById('eRole').classList.add('show');
+      ok=false;
+    }
+  }
+  return ok;
+}
+
+/* ----- Submit ----- */
+document.getElementById('regForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  if(!validate()) return;
+
+  const nama  = document.getElementById('fNama').value.trim();
+  const blok  = document.getElementById('fBlok').value.trim();
+  const hp    = document.getElementById('fHp').value.trim();
+  const lomba = document.querySelector('input[name="lomba"]:checked').value;
+  const roles = [...roleBoxes].filter(r=>r.checked).map(r=>r.value);
+
+  const payload = {
+    nama,
+    blok,
+    nohp: hp,
+    lomba,
+    role: roles.length ? roles.join(' & ') : '-'
+  };
+
+  // loading state
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Mengirim Data...';
+
+  try {
+    // Google Apps Script harus di-fetch dengan no-cors karena cross-origin
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // Tampilkan modal sukses
+    setStep(2);
+    document.getElementById('mNama').textContent = nama;
+    document.getElementById('mBlok').textContent = '🏠 ' + blok;
+    let lombaText = '🏆 ' + lomba;
+    if(roles.length) lombaText += '  ·  Role: ' + roles.join(' & ');
+    document.getElementById('mLomba').textContent = lombaText;
+    document.getElementById('modalOk').classList.add('on');
+
+  } catch(err){
+    document.getElementById('mErrMsg').textContent = err.message || 'Koneksi gagal. Periksa internet kamu.';
+    document.getElementById('modalErr').classList.add('on');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🇮🇩 &nbsp; DAFTAR SEKARANG';
+  }
+});
+
+/* ----- Modal controls ----- */
+function closeModal(){
+  document.getElementById('modalOk').classList.remove('on');
+  document.getElementById('regForm').reset();
+  mlBox.className = 'ml-box';
+  roleBoxes.forEach(r=>{ r.checked=false; r.disabled=false; });
+  updateRole();
+  setStep(0);
+}
+
+function closeErrModal(){
+  document.getElementById('modalErr').classList.remove('on');
+}
+</script>
+</body>
+</html>
