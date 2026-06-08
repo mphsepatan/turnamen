@@ -707,24 +707,24 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
       <!-- Lomba - multi select -->
       <div class="fg">
         <label class="lbl">Jenis Perlombaan <span class="req">*</span></label>
-        <div class="lomba-hint">Boleh pilih <strong>lebih dari 1 lomba</strong> sekaligus ✅</div>
+  <div class="lomba-hint">Pilih <strong>satu</strong> lomba saja ✅</div>
         <div class="lomba-grid">
           <div class="lomba-pill">
-            <input type="checkbox" name="lomba" id="lBT" value="Bulu Tangkis">
+            <input type="radio" name="lomba" id="lBT" value="Bulu Tangkis">
             <label for="lBT">
               <span class="lp-icon">🏸</span>
               <span class="lp-name">Bulu Tangkis</span>
             </label>
           </div>
           <div class="lomba-pill">
-            <input type="checkbox" name="lomba" id="lCT" value="Catur">
+            <input type="radio" name="lomba" id="lCT" value="Catur">
             <label for="lCT">
               <span class="lp-icon">♟️</span>
               <span class="lp-name">Catur</span>
             </label>
           </div>
           <div class="lomba-pill">
-            <input type="checkbox" name="lomba" id="lML" value="Mobile Legend">
+            <input type="radio" name="lomba" id="lML" value="Mobile Legend">
             <label for="lML">
               <span class="lp-icon">🎮</span>
               <span class="lp-name">Mobile Legend</span>
@@ -850,7 +850,7 @@ const lombaSelectedEl   = document.getElementById('lombaSelected');
 const lombaSelectedText = document.getElementById('lombaSelectedText');
 
 function updateLombaUI(){
-  const checked = [...lombaInputs].filter(i => i.checked);
+  const checked = Array.from(document.querySelectorAll('input[name="lomba"]:checked'));
   const hasML   = checked.some(i => i.value === 'Mobile Legend');
 
   // Show / hide ML role box
@@ -901,7 +901,7 @@ function validate(){
   const blok   = document.getElementById('fBlok');
   const hp     = document.getElementById('fHp');
   const gender = document.querySelector('input[name="gender"]:checked');
-  const checked = [...lombaInputs].filter(i => i.checked);
+  const checked = Array.from(document.querySelectorAll('input[name="lomba"]:checked'));
   const hasML  = checked.some(i => i.value === 'Mobile Legend');
 
   if(!nama.value.trim()){
@@ -948,8 +948,8 @@ document.getElementById('regForm').addEventListener('submit', async function(e){
   const hp      = document.getElementById('fHp').value.trim();
   const gender  = document.querySelector('input[name="gender"]:checked').value;
 
-  // ✅ Ambil SEMUA lomba yang dicentang (bukan cuma 1)
-  const lombaArr = [...lombaInputs].filter(i => i.checked).map(i => i.value);
+  // ✅ Ambil lomba yang dipilih (mendukung radio atau checkbox)
+  const lombaArr = Array.from(document.querySelectorAll('input[name="lomba"]:checked')).map(i => i.value);
   const lombaStr = lombaArr.join(', ');
 
   const roles   = [...roleBoxes].filter(r => r.checked).map(r => r.value);
