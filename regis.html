@@ -25,9 +25,7 @@
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
 html { scroll-behavior: smooth; }
-
 body {
   background: var(--bg);
   font-family: 'Nunito', sans-serif;
@@ -68,7 +66,6 @@ body {
   z-index: 0;
 }
 
-/* Particle stars */
 .stars { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .star {
   position: absolute;
@@ -81,7 +78,6 @@ body {
   to   { opacity: 0.9;  transform: scale(1.4); }
 }
 
-/* Decorative rings */
 .ring {
   position: absolute;
   border-radius: 50%;
@@ -303,11 +299,60 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 }
 .err-txt.show { display: block; }
 
-/* Lomba hint */
+/* ===========================
+   JENIS KELAMIN
+=========================== */
+.gender-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.gender-pill { position: relative; }
+.gender-pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+.gender-pill label {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid rgba(255,215,0,0.12);
+  border-radius: 14px;
+  cursor: pointer; transition: all 0.3s;
+  text-transform: none; letter-spacing: 0;
+  font-size: 15px; font-weight: 800;
+  color: rgba(255,255,255,0.45);
+  position: relative;
+}
+.gender-pill label .gp-icon { font-size: 28px; line-height: 1; }
+.gender-pill label::after {
+  content: '';
+  position: absolute; top: 10px; right: 12px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,215,0,0.25);
+  background: transparent;
+  transition: all 0.3s;
+  font-size: 10px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  color: #000;
+}
+.gender-pill input:checked + label::after {
+  content: '✓';
+  background: var(--emas);
+  border-color: var(--emas);
+}
+.gender-pill input:checked + label {
+  border-color: var(--emas);
+  background: rgba(255,215,0,0.1);
+  color: var(--emas);
+  box-shadow: 0 0 22px rgba(255,215,0,0.2);
+}
+.gender-pill label:hover { border-color: rgba(255,215,0,0.35); background: rgba(255,215,0,0.05); }
+
+/* ===========================
+   LOMBA PILLS
+=========================== */
 .lomba-hint { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 10px; line-height: 1.5; }
 .lomba-hint strong { color: var(--emas); }
 
-/* Lomba pills - now checkbox */
 .lomba-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -330,7 +375,6 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 }
 .lomba-pill label .lp-icon { font-size: 32px; line-height: 1; }
 .lomba-pill label .lp-name { font-size: 12px; line-height: 1.3; }
-/* checkmark badge pojok kanan atas */
 .lomba-pill label::after {
   content: '';
   position: absolute; top: 8px; right: 8px;
@@ -356,7 +400,6 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 }
 .lomba-pill label:hover { border-color: rgba(255,215,0,0.35); background: rgba(255,215,0,0.05); }
 
-/* Summary lomba yang dipilih */
 .lomba-selected {
   display: none; margin-top: 10px;
   padding: 10px 14px;
@@ -367,7 +410,9 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 }
 .lomba-selected.show { display: block; }
 
-/* Mobile Legend role */
+/* ===========================
+   MOBILE LEGEND ROLE
+=========================== */
 .ml-box {
   display: none; margin-top: 22px;
   animation: slideIn 0.35s ease both;
@@ -471,12 +516,8 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 }
 .btn-submit:hover::after { left: 140%; }
 .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 14px 42px rgba(204,0,1,0.55); }
-.btn-submit:disabled {
-  opacity: 0.6; cursor: not-allowed;
-  transform: none !important;
-}
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
-/* loading spinner inside btn */
 .spinner {
   display: inline-block;
   width: 18px; height: 18px;
@@ -521,11 +562,9 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
   color: var(--emas); margin-bottom: 8px;
 }
 .modal .msub { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 10px; }
-.modal .mname {
-  font-size: 20px; font-weight: 900;
-  color: white; margin-bottom: 4px;
-}
+.modal .mname { font-size: 20px; font-weight: 900; color: white; margin-bottom: 4px; }
 .modal .mblok { color: rgba(255,255,255,0.45); font-size: 13px; }
+.modal .mgender { color: rgba(255,255,255,0.45); font-size: 13px; margin-top: 2px; }
 .modal .mlomba-list { margin: 14px 0; display: flex; flex-direction: column; gap: 6px; }
 .modal .mlomba-item {
   display: block; padding: 8px 16px;
@@ -550,10 +589,7 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
   cursor: pointer; transition: 0.25s;
 }
 .modal .mbtn:hover { background: var(--merah-tua); transform: translateY(-2px); }
-
-/* Error modal */
 .modal-err .mtitle { color: #ff6b6b; }
-.modal-err .mico { filter: none; }
 
 /* ===========================
    FOOTER
@@ -571,8 +607,7 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
 @media (max-width: 500px) {
   .card { padding: 28px 18px; }
   .role-grid { grid-template-columns: repeat(3, 1fr); }
-  .role-item:nth-child(4),
-  .role-item:nth-child(5) { grid-column: span 1; }
+  .gender-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
@@ -585,7 +620,6 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
   <div class="hero-bg"></div>
   <div class="stars" id="starCanvas"></div>
 
-  <!-- Decorative rings -->
   <div class="ring" style="width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);--spd:80s;"></div>
   <div class="ring" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);--spd:55s;"></div>
 
@@ -632,6 +666,28 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
         <label class="lbl" for="fNama">Nama Lengkap <span class="req">*</span></label>
         <input type="text" id="fNama" placeholder="Masukkan nama lengkap kamu" autocomplete="off">
         <div class="err-txt" id="eNama">⚠ Nama lengkap wajib diisi</div>
+      </div>
+
+      <!-- Jenis Kelamin -->
+      <div class="fg">
+        <label class="lbl">Jenis Kelamin <span class="req">*</span></label>
+        <div class="gender-grid">
+          <div class="gender-pill">
+            <input type="radio" name="gender" id="gLaki" value="Laki-laki">
+            <label for="gLaki">
+              <span class="gp-icon">👨</span>
+              Laki-laki
+            </label>
+          </div>
+          <div class="gender-pill">
+            <input type="radio" name="gender" id="gPerempuan" value="Perempuan">
+            <label for="gPerempuan">
+              <span class="gp-icon">👩</span>
+              Perempuan
+            </label>
+          </div>
+        </div>
+        <div class="err-txt" id="eGender">⚠ Jenis kelamin wajib dipilih</div>
       </div>
 
       <!-- Blok -->
@@ -732,8 +788,9 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
     <div class="mtitle">Pendaftaran Berhasil!</div>
     <div class="msub">Data kamu telah tersimpan. Sampai jumpa di hari-H!</div>
     <div class="mname" id="mNama">—</div>
+    <div class="mgender" id="mGender">—</div>
     <div class="mblok" id="mBlok">—</div>
-    <div class="mlomba" id="mLomba">—</div>
+    <div class="mlomba-list" id="mLombaList"></div>
     <div class="mpesan">🇮🇩 Merdeka! &nbsp;·&nbsp; Semoga berhasil di lombanya 💪</div>
     <button class="mbtn" onclick="closeModal()">TUTUP</button>
   </div>
@@ -750,12 +807,11 @@ input.err-field { border-color: var(--merah-muda) !important; box-shadow: 0 0 0 
   </div>
 </div>
 
-<div class="flag-stripe"></div>
+<div class="flag-stripe" style="position:relative;"></div>
 
 <script>
 // ============================================================
 //  ⚠️  GANTI URL INI dengan URL deployment Apps Script kamu!
-//  Setelah deploy di Apps Script, copy URL-nya ke sini.
 // ============================================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-elVbi-UT-rFlsgkn9-y6qQTTarPWjtU_OJQNtueHgriHY3f505GBl-q3NITFHKyzPQ/exec";
 // ============================================================
@@ -767,103 +823,116 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-elVbi-UT-rFlsgkn9
     const s = document.createElement('div');
     s.className = 'star';
     const sz = 1 + Math.random()*2.5;
-    s.style.cssText = `
-      left:${Math.random()*100}%;
-      top:${Math.random()*100}%;
-      width:${sz}px; height:${sz}px;
-      --dur:${2+Math.random()*4}s;
-      --delay:${Math.random()*4}s;
-    `;
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s;`;
     c.appendChild(s);
   }
 })();
 
 /* ----- Step indicator ----- */
 function setStep(n){
-  const items = ['sData','sLomba','sDone'];
-  const lines = ['sl1','sl2'];
-  items.forEach((id,i)=>{
+  ['sData','sLomba','sDone'].forEach((id,i)=>{
     const el = document.getElementById(id);
     el.className = 'step-item';
     if(i < n) el.classList.add('done');
     if(i === n) el.classList.add('active');
   });
-  lines.forEach((id,i)=>{
+  ['sl1','sl2'].forEach((id,i)=>{
     const el = document.getElementById(id);
     el.className = 'step-line';
     if(i < n) el.classList.add('done');
   });
 }
 
-/* ----- Lomba toggle ----- */
+/* ----- Lomba checkboxes ----- */
 const lombaInputs = document.querySelectorAll('input[name="lomba"]');
-const mlBox = document.getElementById('mlBox');
+const mlBox       = document.getElementById('mlBox');
+const lombaSelectedEl   = document.getElementById('lombaSelected');
+const lombaSelectedText = document.getElementById('lombaSelectedText');
 
-lombaInputs.forEach(inp => {
-  inp.addEventListener('change', () => {
-    const isML = inp.value === 'Mobile Legend';
-    mlBox.className = 'ml-box' + (isML ? ' on' : '');
-    if(!isML){
-      roleBoxes.forEach(r=>{ r.checked=false; r.disabled=false; });
-      updateRole();
-    }
-    setStep(inp.checked ? 1 : 0);
-  });
-});
+function updateLombaUI(){
+  const checked = [...lombaInputs].filter(i => i.checked);
+  const hasML   = checked.some(i => i.value === 'Mobile Legend');
+
+  // Show / hide ML role box
+  mlBox.className = 'ml-box' + (hasML ? ' on' : '');
+  if(!hasML){
+    roleBoxes.forEach(r => { r.checked = false; r.disabled = false; });
+    updateRole();
+  }
+
+  // Show selected summary
+  if(checked.length > 0){
+    lombaSelectedText.textContent = checked.map(i => i.value).join(', ');
+    lombaSelectedEl.classList.add('show');
+    setStep(1);
+  } else {
+    lombaSelectedEl.classList.remove('show');
+    setStep(0);
+  }
+}
+
+lombaInputs.forEach(inp => inp.addEventListener('change', updateLombaUI));
 
 /* ----- Role logic ----- */
 const roleBoxes = document.querySelectorAll('input[name="role"]');
 const roleCtr   = document.getElementById('roleCtr');
 
 function updateRole(){
-  const checked = [...roleBoxes].filter(r=>r.checked);
+  const checked = [...roleBoxes].filter(r => r.checked);
   const n = checked.length;
   roleCtr.textContent = n + ' / 2 role dipilih';
   roleCtr.className = 'role-counter' + (n===2?' ok': n>2?' over':'');
-  roleBoxes.forEach(r=>{ r.disabled = (n>=2 && !r.checked); });
+  roleBoxes.forEach(r => { r.disabled = (n >= 2 && !r.checked); });
 }
 
 roleBoxes.forEach(r => r.addEventListener('change', updateRole));
 
 /* ----- Validation ----- */
 function clearErrors(){
-  document.querySelectorAll('.err-field').forEach(el=>el.classList.remove('err-field'));
-  document.querySelectorAll('.err-txt').forEach(el=>el.classList.remove('show'));
+  document.querySelectorAll('.err-field').forEach(el => el.classList.remove('err-field'));
+  document.querySelectorAll('.err-txt').forEach(el => el.classList.remove('show'));
 }
 
 function validate(){
   clearErrors();
   let ok = true;
-  const nama  = document.getElementById('fNama');
-  const blok  = document.getElementById('fBlok');
-  const hp    = document.getElementById('fHp');
-  const lomba = document.querySelector('input[name="lomba"]:checked');
+
+  const nama   = document.getElementById('fNama');
+  const blok   = document.getElementById('fBlok');
+  const hp     = document.getElementById('fHp');
+  const gender = document.querySelector('input[name="gender"]:checked');
+  const checked = [...lombaInputs].filter(i => i.checked);
+  const hasML  = checked.some(i => i.value === 'Mobile Legend');
 
   if(!nama.value.trim()){
     nama.classList.add('err-field');
     document.getElementById('eNama').classList.add('show');
-    ok=false;
+    ok = false;
+  }
+  if(!gender){
+    document.getElementById('eGender').classList.add('show');
+    ok = false;
   }
   if(!blok.value.trim()){
     blok.classList.add('err-field');
     document.getElementById('eBlok').classList.add('show');
-    ok=false;
+    ok = false;
   }
   const hpClean = hp.value.trim().replace(/\D/g,'');
-  if(!hpClean || hpClean.length<10){
+  if(!hpClean || hpClean.length < 10){
     hp.classList.add('err-field');
     document.getElementById('eHp').classList.add('show');
-    ok=false;
+    ok = false;
   }
-  if(!lomba){
+  if(checked.length === 0){
     document.getElementById('eLomba').classList.add('show');
-    ok=false;
+    ok = false;
   }
-  if(lomba && lomba.value==='Mobile Legend'){
-    const checked = [...roleBoxes].filter(r=>r.checked);
-    if(checked.length !== 2){
+  if(hasML){
+    const rolePicked = [...roleBoxes].filter(r => r.checked);
+    if(rolePicked.length !== 2){
       document.getElementById('eRole').classList.add('show');
-      ok=false;
+      ok = false;
     }
   }
   return ok;
@@ -874,41 +943,58 @@ document.getElementById('regForm').addEventListener('submit', async function(e){
   e.preventDefault();
   if(!validate()) return;
 
-  const nama  = document.getElementById('fNama').value.trim();
-  const blok  = document.getElementById('fBlok').value.trim();
-  const hp    = document.getElementById('fHp').value.trim();
-  const lomba = document.querySelector('input[name="lomba"]:checked').value;
-  const roles = [...roleBoxes].filter(r=>r.checked).map(r=>r.value);
+  const nama    = document.getElementById('fNama').value.trim();
+  const blok    = document.getElementById('fBlok').value.trim();
+  const hp      = document.getElementById('fHp').value.trim();
+  const gender  = document.querySelector('input[name="gender"]:checked').value;
+
+  // ✅ Ambil SEMUA lomba yang dicentang (bukan cuma 1)
+  const lombaArr = [...lombaInputs].filter(i => i.checked).map(i => i.value);
+  const lombaStr = lombaArr.join(', ');
+
+  const roles   = [...roleBoxes].filter(r => r.checked).map(r => r.value);
 
   const payload = {
     nama,
+    gender,
     blok,
-    nohp: hp,
-    lomba,
-    role: roles.length ? roles.join(' & ') : '-'
+    nohp:  hp,
+    lomba: lombaStr,          // semua lomba, pisahkan koma
+    role:  roles.length ? roles.join(' & ') : '-'
   };
 
-  // loading state
+  // Loading state
   const btn = document.getElementById('btnSubmit');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Mengirim Data...';
 
   try {
-    // Google Apps Script harus di-fetch dengan no-cors karena cross-origin
     await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors',
+      mode:   'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body:   JSON.stringify(payload)
     });
 
-    // Tampilkan modal sukses
+    // Modal sukses
     setStep(2);
-    document.getElementById('mNama').textContent = nama;
-    document.getElementById('mBlok').textContent = '🏠 ' + blok;
-    let lombaText = '🏆 ' + lomba;
-    if(roles.length) lombaText += '  ·  Role: ' + roles.join(' & ');
-    document.getElementById('mLomba').textContent = lombaText;
+    document.getElementById('mNama').textContent   = nama;
+    document.getElementById('mGender').textContent = (gender === 'Laki-laki' ? '👨 ' : '👩 ') + gender;
+    document.getElementById('mBlok').textContent   = '🏠 ' + blok;
+
+    // Tampilkan daftar lomba di modal
+    const listEl = document.getElementById('mLombaList');
+    listEl.innerHTML = '';
+    lombaArr.forEach(l => {
+      const icon = l === 'Bulu Tangkis' ? '🏸' : l === 'Catur' ? '♟️' : '🎮';
+      let text = icon + ' ' + l;
+      if(l === 'Mobile Legend' && roles.length) text += '  ·  Role: ' + roles.join(' & ');
+      const span = document.createElement('span');
+      span.className = 'mlomba-item';
+      span.textContent = text;
+      listEl.appendChild(span);
+    });
+
     document.getElementById('modalOk').classList.add('on');
 
   } catch(err){
@@ -925,7 +1011,8 @@ function closeModal(){
   document.getElementById('modalOk').classList.remove('on');
   document.getElementById('regForm').reset();
   mlBox.className = 'ml-box';
-  roleBoxes.forEach(r=>{ r.checked=false; r.disabled=false; });
+  lombaSelectedEl.classList.remove('show');
+  roleBoxes.forEach(r => { r.checked = false; r.disabled = false; });
   updateRole();
   setStep(0);
 }
