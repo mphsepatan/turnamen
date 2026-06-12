@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MPHS Tournament 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Rajdhani', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#f7fee7',
+              100: '#ecfccb',
+              200: '#d9f99d',
+              400: '#a3e635',
+              600: '#65a30d',
+              800: '#3f6212',
+              900: '#1a2e05',
+            },
+            gold: {
+              400: '#f5c842',
+              500: '#e8b020',
+              600: '#c48c00',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0a130d; color: #e2e8f0; }
+    .font-display { font-family: 'Rajdhani', sans-serif; }
+
+    /* Grid line bg */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(132,204,22,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(132,204,22,0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+    }
+    .glass-strong {
+      background: rgba(10,28,16,0.7);
+      border: 1px solid rgba(132,204,22,0.22);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Tab underline animation */
+    .tab-btn { transition: color .2s; position: relative; }
+    .tab-btn::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 2px; background: #a3e635;
+      transform: scaleX(0); transition: transform .2s;
+    }
+    .tab-btn.active { color: #bef264; }
+    .tab-btn.active::after { transform: scaleX(1); }
+
+    /* Sub-tab pills (Teams tab) */
+    .subtab-btn {
+      transition: all .2s;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8;
+    }
+    .subtab-btn.active {
+      background: rgba(163,230,53,0.12);
+      border-color: rgba(163,230,53,0.4);
+      color: #bef264;
+    }
+
+    /* Stat card accent line */
+    .stat-card { border-top: 2px solid; }
+    .stat-card-ml  { border-color: #a3e635; }
+    .stat-card-bt  { border-color: #34d399; }
+    .stat-card-ct  { border-color: #fbbf24; }
+    .stat-card-all { border-color: #c084fc; }
+
+    /* Role badge */
+    .role-mid    { background: rgba(132,204,22,0.15); color: #bef264; border: 1px solid rgba(132,204,22,0.3); }
+    .role-gold   { background: rgba(245,200,66,0.12);  color: #f5c842; border: 1px solid rgba(245,200,66,0.3); }
+    .role-exp    { background: rgba(52,211,153,0.12);  color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
+    .role-jungle { background: rgba(167,139,250,0.12); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.3); }
+    .role-roam   { background: rgba(251,146,60,0.12);  color: #fdba74; border: 1px solid rgba(251,146,60,0.3); }
+
+    /* Team card accent */
+    .team-stripe { height: 3px; border-radius: 3px 3px 0 0; }
+
+    /* Spinner */
+    .spin { animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Bar fill animation */
+    .bar-fill { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+
+    /* Pulse dot */
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #a3e635;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(163,230,53,.5); }
+      50% { opacity: .7; box-shadow: 0 0 0 6px rgba(163,230,53,0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(163,230,53,0.3); border-radius: 3px; }
+
+    /* Table row hover */
+    .trow:hover td { background: rgba(163,230,53,0.06); }
+
+    /* Toast */
+    #toast {
+      transition: opacity .3s, transform .3s;
+    }
+    #toast.hide { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+    @media (max-width: 640px) {
+      .team-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen relative">
+
+<!-- ─── TOAST ─── -->
+<div id="toast" class="hide fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-strong text-sm px-5 py-2.5 rounded-full text-slate-200 flex items-center gap-2">
+  <i class="fa-solid fa-circle-check text-emerald-400"></i>
+  <span id="toast-msg">copied!</span>
+</div>
+
+<!-- ─── HEADER ─── -->
+<header class="relative z-10 border-b border-white/5 py-5 px-6 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center">
+      <i class="fa-solid fa-trophy text-gold-400 text-sm"></i>
+    </div>
+    <div>
+      <div class="font-display text-xl font-700 tracking-wide text-white">MPHS Tournament <span class="text-brand-400">2026</span></div>
+      <div class="text-xs text-slate-400 font-body">Dashboard pendaftaran &amp; pembagian tim</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <div id="sync-status" class="flex items-center gap-2 text-xs text-slate-400">
+      <div class="pulse-dot"></div>
+      <span id="sync-label">Memuat data...</span>
+    </div>
+    <button onclick="loadData()" class="glass text-xs px-3 py-1.5 rounded-lg hover:bg-white/10 transition flex items-center gap-1.5 text-slate-300">
+      <i class="fa-solid fa-rotate-right" id="refresh-icon"></i> Refresh
+    </button>
+  </div>
+</header>
+
+<!-- ─── MAIN ─── -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+  <!-- STATS CARDS -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8" id="stats-grid">
+    <div class="stat-card stat-card-all glass rounded-xl p-4 animate-pulse">
+      <div class="h-3 bg-white/5 rounded mb-3 w-2/3"></div>
+      <div class="h-8 bg-white/5 rounded w-1/2"></div>
+    </div>
+    <div class="stat-card stat-card-ml glass rounded-xl p-4 animate-pulse">
+      <div class="h-3 bg-white/5 rounded mb-3 w-2/3"></div>
+      <div class="h-8 bg-white/5 rounded w-1/2"></div>
+    </div>
+    <div class="stat-card stat-card-bt glass rounded-xl p-4 animate-pulse">
+      <div class="h-3 bg-white/5 rounded mb-3 w-2/3"></div>
+      <div class="h-8 bg-white/5 rounded w-1/2"></div>
+    </div>
+    <div class="stat-card stat-card-ct glass rounded-xl p-4 animate-pulse">
+      <div class="h-3 bg-white/5 rounded mb-3 w-2/3"></div>
+      <div class="h-8 bg-white/5 rounded w-1/2"></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="flex gap-6 border-b border-white/8 mb-6 text-sm font-medium text-slate-400">
+    <button class="tab-btn active pb-3" data-tab="peserta" onclick="switchTab(this,'peserta')">
+      <i class="fa-solid fa-users mr-1.5"></i> Semua peserta
+    </button>
+    <button class="tab-btn pb-3" data-tab="ml" onclick="switchTab(this,'ml')">
+      <i class="fa-solid fa-gamepad mr-1.5"></i> Mobile Legend
+    </button>
+    <button class="tab-btn pb-3" data-tab="teams" onclick="switchTab(this,'teams')">
+      <i class="fa-solid fa-shield-halved mr-1.5"></i> Pembagian tim
+    </button>
+  </div>
+
+  <!-- ═══ TAB: PESERTA ═══ -->
+  <div id="tab-peserta">
+    <!-- search + filter -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-5">
+      <div class="relative flex-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+        <input id="search" type="text" placeholder="Cari nama atau blok..."
+          class="w-full glass bg-transparent rounded-lg pl-9 pr-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none focus:border-brand-600 transition"
+          oninput="renderTable()" />
+      </div>
+      <select id="filter-lomba" onchange="renderTable()"
+        class="glass bg-transparent rounded-lg px-4 py-2.5 text-sm text-slate-300 outline-none cursor-pointer">
+        <option value="">Semua lomba</option>
+        <option value="Mobile Legend">Mobile Legend</option>
+        <option value="Bulu Tangkis">Bulu Tangkis</option>
+        <option value="Catur">Catur</option>
+      </select>
+    </div>
+
+    <div class="glass-strong rounded-2xl overflow-hidden">
+      <table class="w-full text-sm" style="table-layout:fixed;">
+        <colgroup>
+          <col style="width:40px">
+          <col style="width:auto">
+          <col style="width:100px">
+          <col style="width:180px">
+          <col style="width:110px">
+        </colgroup>
+        <thead>
+          <tr class="border-b border-white/8 text-xs text-slate-400 uppercase tracking-wider">
+            <th class="py-3 pl-5 text-left font-medium">#</th>
+            <th class="py-3 px-3 text-left font-medium">Nama</th>
+            <th class="py-3 px-3 text-left font-medium">Blok</th>
+            <th class="py-3 px-3 text-left font-medium">Cabang lomba</th>
+            <th class="py-3 pr-5 text-left font-medium">Daftar</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="5" class="py-12 text-center text-slate-500">
+            <i class="fa-solid fa-circle-notch spin mr-2"></i>Memuat data...
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="table-count" class="text-xs text-slate-500 mt-3 text-right"></div>
+  </div>
+
+  <!-- ═══ TAB: ML ═══ -->
+  <div id="tab-ml" class="hidden">
+    <!-- Role distribution -->
+    <div class="glass-strong rounded-2xl p-5 mb-6">
+      <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4">Distribusi preferensi role</div>
+      <div id="role-bars" class="space-y-3"></div>
+    </div>
+    <!-- ML player list -->
+    <div class="glass-strong rounded-2xl overflow-hidden">
+      <table class="w-full text-sm" style="table-layout:fixed;">
+        <colgroup>
+          <col style="width:40px">
+          <col style="width:auto">
+          <col style="width:100px">
+          <col style="width:auto">
+        </colgroup>
+        <thead>
+          <tr class="border-b border-white/8 text-xs text-slate-400 uppercase tracking-wider">
+            <th class="py-3 pl-5 text-left font-medium">#</th>
+            <th class="py-3 px-3 text-left font-medium">Nama</th>
+            <th class="py-3 px-3 text-left font-medium">Blok</th>
+            <th class="py-3 pr-5 text-left font-medium">Role pilihan</th>
+          </tr>
+        </thead>
+        <tbody id="ml-body">
+          <tr><td colspan="4" class="py-12 text-center text-slate-500"><i class="fa-solid fa-circle-notch spin mr-2"></i>Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: TEAMS ═══ -->
+  <div id="tab-teams" class="hidden">
+
+    <!-- Sub-tabs -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button class="subtab-btn active rounded-lg px-4 py-2 text-sm font-medium transition" data-subtab="ml" onclick="switchTeamsSubtab(this,'ml')">
+        <i class="fa-solid fa-gamepad mr-1.5"></i> Mobile Legend <span class="opacity-60">(5v5)</span>
+      </button>
+      <button class="subtab-btn rounded-lg px-4 py-2 text-sm font-medium transition" data-subtab="bt" onclick="switchTeamsSubtab(this,'bt')">
+        <i class="fa-solid fa-person-running mr-1.5"></i> Bulu Tangkis <span class="opacity-60">(2v2)</span>
+      </button>
+      <button class="subtab-btn rounded-lg px-4 py-2 text-sm font-medium transition" data-subtab="catur" onclick="switchTeamsSubtab(this,'catur')">
+        <i class="fa-solid fa-chess mr-1.5"></i> Catur <span class="opacity-60">(1v1)</span>
+      </button>
+    </div>
+
+    <!-- ── ML teams ── -->
+    <div id="teamsub-ml">
+      <div class="flex items-center justify-between mb-5">
+        <div class="text-sm text-slate-400" id="teams-summary"></div>
+        <button onclick="generateAndRenderML()"
+          class="flex items-center gap-2 bg-brand-600 hover:bg-brand-800 transition text-white text-sm font-medium px-4 py-2.5 rounded-xl">
+          <i class="fa-solid fa-shuffle"></i> Acak ulang tim
+        </button>
+      </div>
+      <div id="teams-container" class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
+      <div id="standby-section"></div>
+      <div class="glass rounded-xl p-4 text-xs text-slate-400 flex flex-col sm:flex-row gap-3">
+        <div class="flex items-center gap-2"><span class="text-emerald-400"><i class="fa-solid fa-check-circle"></i></span> Role sesuai preferensi</div>
+        <div class="flex items-center gap-2"><span class="text-slate-500"><i class="fa-solid fa-random"></i></span> Role diisi acak (slot kosong)</div>
+        <div class="flex items-center gap-2"><span class="text-amber-400"><i class="fa-solid fa-crown"></i></span> Role utama (pilihan pertama)</div>
+      </div>
+    </div>
+
+    <!-- ── BT pairs ── -->
+    <div id="teamsub-bt" class="hidden">
+      <div class="flex items-center justify-between mb-5">
+        <div class="text-sm text-slate-400" id="bt-teams-summary"></div>
+        <button onclick="generateAndRenderBT()"
+          class="flex items-center gap-2 bg-brand-600 hover:bg-brand-800 transition text-white text-sm font-medium px-4 py-2.5 rounded-xl">
+          <i class="fa-solid fa-shuffle"></i> Acak ulang pasangan
+        </button>
+      </div>
+      <div id="bt-teams-container" class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
+      <div id="bt-standby-section"></div>
+    </div>
+
+    <!-- ── Catur matches ── -->
+    <div id="teamsub-catur" class="hidden">
+      <div class="flex items-center justify-between mb-5">
+        <div class="text-sm text-slate-400" id="catur-teams-summary"></div>
+        <button onclick="generateAndRenderCatur()"
+          class="flex items-center gap-2 bg-brand-600 hover:bg-brand-800 transition text-white text-sm font-medium px-4 py-2.5 rounded-xl">
+          <i class="fa-solid fa-shuffle"></i> Acak ulang pertandingan
+        </button>
+      </div>
+      <div id="catur-teams-container" class="team-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
+      <div id="catur-standby-section"></div>
+    </div>
+
+  </div>
+
+</main>
+<footer class="relative z-10 border-t border-white/10 mt-16 py-5 text-center text-xs text-slate-300">
+  <div>
+    MPHS Tournament 2026 &mdash; Data live dari Google Sheets
+    <span class="mx-2 opacity-30">|</span>
+    <a href="https://docs.google.com/spreadsheets/d/1uhvvUrRCef7sGnzviEViSc1-_ifZ5JNlhkknxKmIJs8"
+       target="_blank"
+       class="hover:text-white transition">
+      <i class="fa-solid fa-table-cells-large mr-1"></i>Lihat spreadsheet
+    </a>
+  </div>
+  <div class="mt-2 text-slate-400">
+    &copy; 2026 Ryuzel. All rights reserved.
+  </div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════
+//  CONFIG — ganti SHEET_ID kalau spreadsheet berubah
+// ════════════════════════════════════════════════════
+const SHEET_ID   = '1uhvvUrRCef7sGnzviEViSc1-_ifZ5JNlhkknxKmIJs8';
+const SHEET_NAME = 'Form Responses 1'; // nama tab di spreadsheet
+
+// URL CSV publik (spreadsheet harus "Anyone with link can view")
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+const ROLES = ['Mid Lane','Gold','EXP','Jungle','Roam'];
+const TEAM_COLORS = ['#a3e635','#34d399','#f5c842','#c084fc','#fb923c','#f472b6','#38bdf8','#818cf8'];
+const ROLE_CLASS  = { 'Mid Lane':'role-mid','Gold':'role-gold','EXP':'role-exp','Jungle':'role-jungle','Roam':'role-roam' };
+
+let allPlayers = [];
+
+// ════════════════════════════════════════════════════
+//  LOAD & PARSE CSV
+// ════════════════════════════════════════════════════
+async function loadData() {
+  const icon = document.getElementById('refresh-icon');
+  icon.classList.add('spin');
+  document.getElementById('sync-label').textContent = 'Memuat data...';
+
+  try {
+    const res = await fetch(CSV_URL + '&_=' + Date.now());
+    if (!res.ok) throw new Error('Fetch gagal: ' + res.status);
+    const text = await res.text();
+    allPlayers = parseCSV(text);
+    renderStats();
+    renderTable();
+    renderMLTab();
+    document.getElementById('sync-label').textContent = 'Live · ' + new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    console.error(e);
+    document.getElementById('sync-label').textContent = 'Gagal memuat';
+    showFallback();
+  } finally {
+    icon.classList.remove('spin');
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  // baris 0 = header, mulai dari baris 1
+  const players = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i]);
+    if (!cols[2]) continue; // skip baris kosong
+    const nama   = cols[2]?.replace(/^"|"$/g,'').trim() || '';
+    const gender = cols[3]?.replace(/^"|"$/g,'').trim() || '';
+    const blok   = cols[4]?.replace(/^"|"$/g,'').trim() || '';
+    const hp     = cols[5]?.replace(/^"|"$/g,'').trim() || '';
+    const lomba  = cols[6]?.replace(/^"|"$/g,'').trim() || '';
+    const role   = cols[7]?.replace(/^"|"$/g,'').trim() || '';
+    const ts     = cols[1]?.replace(/^"|"$/g,'').trim() || '';
+
+    if (!nama) continue;
+
+    const lombaArr = lomba.split(',').map(s=>s.trim()).filter(Boolean);
+    const roleArr  = role === '-' ? [] : role.split(/[,&]/).map(s=>s.trim()).filter(Boolean);
+
+    players.push({ nama, gender, blok, hp, lombaArr, roleArr, ts });
+  }
+  return players;
+}
+
+function splitCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; cur += c; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// ════════════════════════════════════════════════════
+//  FALLBACK — data statis kalau fetch gagal / CORS
+// ════════════════════════════════════════════════════
+function showFallback() {
+  allPlayers = FALLBACK_DATA;
+  renderStats();
+  renderTable();
+  renderMLTab();
+  document.getElementById('sync-label').textContent = 'Data lokal (offline)';
+  showToast('Gagal connect ke Sheets — tampilkan data lokal', 'warning');
+}
+
+// ════════════════════════════════════════════════════
+//  STATS CARDS
+// ════════════════════════════════════════════════════
+function renderStats() {
+  const total = allPlayers.length;
+  const ml = allPlayers.filter(p=>p.lombaArr.includes('Mobile Legend')).length;
+  const bt = allPlayers.filter(p=>p.lombaArr.includes('Bulu Tangkis')).length;
+  const ct = allPlayers.filter(p=>p.lombaArr.includes('Catur')).length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    ${statCard('fa-users','Pendaftar',total,'stat-card-all','text-purple-400')}
+    ${statCard('fa-gamepad','Mobile Legend',ml,'stat-card-ml','text-brand-400')}
+    ${statCard('fa-person-running','Bulu Tangkis',bt,'stat-card-bt','text-emerald-400')}
+    ${statCard('fa-chess','Catur',ct,'stat-card-ct','text-amber-400')}
+  `;
+}
+
+function statCard(icon, label, val, cls, iconCls) {
+  return `<div class="stat-card ${cls} glass rounded-xl p-4">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs text-slate-400 font-medium">${label}</span>
+      <i class="fa-solid ${icon} text-sm ${iconCls} opacity-70"></i>
+    </div>
+    <div class="font-display text-3xl font-700 text-white">${val}</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════
+//  TABLE — semua peserta
+// ════════════════════════════════════════════════════
+function renderTable() {
+  const q  = document.getElementById('search').value.toLowerCase();
+  const fl = document.getElementById('filter-lomba').value;
+
+  const filtered = allPlayers.filter(p => {
+    const matchQ  = p.nama.toLowerCase().includes(q) || p.blok.toLowerCase().includes(q);
+    const matchFL = !fl || p.lombaArr.includes(fl);
+    return matchQ && matchFL;
+  });
+
+  const rows = filtered.map((p, i) => `
+    <tr class="trow border-b border-white/5 last:border-0">
+      <td class="py-3 pl-5 text-slate-500 text-xs">${i+1}</td>
+      <td class="py-3 px-3 text-slate-200 font-medium truncate" title="${p.nama}">${p.nama}</td>
+      <td class="py-3 px-3 text-slate-400 text-xs truncate">${p.blok}</td>
+      <td class="py-3 px-3">${badgesLomba(p.lombaArr)}</td>
+      <td class="py-3 pr-5 text-slate-500 text-xs">${formatDate(p.ts)}</td>
+    </tr>`).join('');
+
+  document.getElementById('table-body').innerHTML = rows || '<tr><td colspan="5" class="py-10 text-center text-slate-500">Tidak ada data</td></tr>';
+  document.getElementById('table-count').textContent = `Menampilkan ${filtered.length} dari ${allPlayers.length} peserta`;
+}
+
+function badgesLomba(arr) {
+  return arr.map(l => {
+    if (l==='Mobile Legend') return `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full mr-1 role-mid">ML</span>`;
+    if (l==='Bulu Tangkis')  return `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full mr-1 role-exp">BT</span>`;
+    if (l==='Catur')         return `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full mr-1 role-gold">Catur</span>`;
+    return '';
+  }).join('');
+}
+
+function formatDate(ts) {
+  if (!ts) return '-';
+  // format: DD/MM/YYYY H:MM:SS
+  const parts = ts.split(' ');
+  if (!parts[0]) return ts;
+  const [d,m,y] = parts[0].split('/');
+  return `${d}/${m}`;
+}
+
+// ════════════════════════════════════════════════════
+//  ML TAB — role bars + player list
+// ════════════════════════════════════════════════════
+function renderMLTab() {
+  const mlPlayers = allPlayers.filter(p=>p.lombaArr.includes('Mobile Legend'));
+
+  // role count
+  const roleCounts = {};
+  ROLES.forEach(r => roleCounts[r] = 0);
+  mlPlayers.forEach(p => p.roleArr.forEach(r => {
+    const key = ROLES.find(ro=>r.toLowerCase().includes(ro.toLowerCase()));
+    if (key) roleCounts[key]++;
+  }));
+  const maxCount = Math.max(...Object.values(roleCounts), 1);
+
+  const ROLE_COLORS_BAR = { 'Mid Lane':'#a3e635','Gold':'#f5c842','EXP':'#34d399','Jungle':'#c084fc','Roam':'#fb923c' };
+  document.getElementById('role-bars').innerHTML = ROLES.map(r => `
+    <div class="flex items-center gap-3 text-sm">
+      <div class="w-20 text-right text-xs text-slate-400">${r}</div>
+      <div class="flex-1 bg-white/5 rounded-full h-5 overflow-hidden">
+        <div class="bar-fill h-5 rounded-full flex items-center pl-2" style="width:${Math.round(roleCounts[r]/maxCount*100)}%; background:${ROLE_COLORS_BAR[r]}22; border:1px solid ${ROLE_COLORS_BAR[r]}55;">
+        </div>
+      </div>
+      <div class="w-6 text-xs text-slate-300 font-medium">${roleCounts[r]}</div>
+    </div>`).join('');
+
+  // player list
+  const rows = mlPlayers.map((p,i) => `
+    <tr class="trow border-b border-white/5 last:border-0">
+      <td class="py-3 pl-5 text-slate-500 text-xs">${i+1}</td>
+      <td class="py-3 px-3 text-slate-200 font-medium truncate">${p.nama}</td>
+      <td class="py-3 px-3 text-slate-400 text-xs">${p.blok}</td>
+      <td class="py-3 pr-5">${roleChips(p.roleArr)}</td>
+    </tr>`).join('');
+  document.getElementById('ml-body').innerHTML = rows || '<tr><td colspan="4" class="py-10 text-center text-slate-500">Tidak ada data</td></tr>';
+}
+
+function roleChips(arr) {
+  return arr.map(r => {
+    const key = ROLES.find(ro=>r.toLowerCase().includes(ro.toLowerCase())) || r;
+    const cls = ROLE_CLASS[key] || '';
+    return `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full mr-1 ${cls}">${key}</span>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════
+//  TEAMS — ML 5v5 generator
+// ════════════════════════════════════════════════════
+function generateTeams() {
+  const mlPlayers = allPlayers.filter(p=>p.lombaArr.includes('Mobile Legend'));
+  const pool = shuffle(mlPlayers.map(p => ({
+    ...p,
+    normalizedRoles: p.roleArr.map(r => ROLES.find(ro=>r.toLowerCase().includes(ro.toLowerCase()))).filter(Boolean)
+  })));
+
+  const numTeams = Math.floor(pool.length / 5);
+  const teams = Array.from({length: numTeams}, (_,i) => ({id:i+1, members:[]}));
+  const used = new Set();
+
+  // Pass 1: fill by preferred role
+  for (const role of ROLES) {
+    const candidates = shuffle(pool.filter(p=>!used.has(p.nama) && p.normalizedRoles.includes(role)));
+    for (const team of teams) {
+      const hasRole = team.members.some(m=>m.assignedRole===role);
+      if (!hasRole && candidates.length>0) {
+        const player = candidates.shift();
+        team.members.push({...player, assignedRole:role, preferred:true, isPrimary: player.normalizedRoles[0]===role});
+        used.add(player.nama);
+      }
+    }
+  }
+
+  // Pass 2: fill remaining slots randomly
+  const remaining = shuffle(pool.filter(p=>!used.has(p.nama)));
+  for (const team of teams) {
+    for (const role of ROLES) {
+      if (!team.members.some(m=>m.assignedRole===role) && remaining.length>0) {
+        const player = remaining.shift();
+        team.members.push({...player, assignedRole:role, preferred:false, isPrimary:false});
+        used.add(player.nama);
+      }
+    }
+  }
+
+  const standby = pool.filter(p=>!used.has(p.nama));
+  return { teams, standby };
+}
+
+function generateAndRenderML() {
+  const { teams, standby } = generateTeams();
+  renderTeams(teams, standby);
+}
+
+function renderTeams(teams, standby) {
+  const mlCount = allPlayers.filter(p=>p.lombaArr.includes('Mobile Legend')).length;
+  const prefCount = teams.reduce((s,t)=>s+t.members.filter(m=>m.preferred).length,0);
+  const totalMembers = teams.reduce((s,t)=>s+t.members.length,0);
+  const pct = totalMembers>0 ? Math.round(prefCount/totalMembers*100) : 0;
+  document.getElementById('teams-summary').innerHTML =
+    `<span class="text-slate-300 font-medium">${teams.length} tim</span> terbentuk dari ${mlCount} peserta &mdash; ` +
+    `<span class="text-emerald-400">${pct}%</span> sesuai preferensi role`;
+
+  document.getElementById('teams-container').innerHTML = teams.map((team,i) => {
+    const color = TEAM_COLORS[i % TEAM_COLORS.length];
+    const membersByRole = {};
+    ROLES.forEach(r => membersByRole[r] = team.members.find(m=>m.assignedRole===r));
+
+    return `<div class="glass-strong rounded-2xl overflow-hidden">
+      <div class="team-stripe" style="background:${color}"></div>
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-display text-base font-600 text-white flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full" style="background:${color}"></div>
+            Tim ${team.id}
+          </div>
+          <span class="text-xs text-slate-500">${team.members.length}/5</span>
+        </div>
+        <div class="space-y-2">
+          ${ROLES.map(role => {
+            const m = membersByRole[role];
+            const cls = ROLE_CLASS[role] || '';
+            if (m) return `
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${cls} w-16 text-center shrink-0">${role==='Mid Lane'?'Mid':role}</span>
+                <span class="text-sm text-slate-200 truncate flex-1" title="${m.nama}">${m.nama}</span>
+                ${m.preferred
+                  ? `<i class="fa-solid ${m.isPrimary?'fa-crown text-amber-400':'fa-check text-emerald-400'} text-xs shrink-0" title="${m.isPrimary?'Role utama':'Role pilihan'}"></i>`
+                  : `<i class="fa-solid fa-dice text-slate-600 text-xs shrink-0" title="Diisi acak"></i>`}
+              </div>`;
+            else return `
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full ${cls} w-16 text-center shrink-0 opacity-40">${role==='Mid Lane'?'Mid':role}</span>
+                <span class="text-xs text-slate-600 italic">— kosong</span>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="text-sm text-slate-500 col-span-full text-center py-8">Belum cukup peserta Mobile Legend (minimal 5 orang)</div>';
+
+  // Standby
+  if (standby.length > 0) {
+    document.getElementById('standby-section').innerHTML = `
+      <div class="glass rounded-2xl p-5 mb-4 border border-amber-500/20">
+        <div class="text-xs font-medium text-amber-400 uppercase tracking-wider mb-3">
+          <i class="fa-solid fa-hourglass-half mr-1.5"></i>Standby / cadangan (${standby.length} orang)
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${standby.map(p=>`
+            <div class="glass rounded-lg px-3 py-1.5 text-xs text-slate-300 flex items-center gap-2">
+              <span>${p.nama}</span>
+              <span class="text-slate-500">${p.normalizedRoles.join(', ')||'-'}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('standby-section').innerHTML = '';
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  TEAMS — Bulu Tangkis 2v2 generator
+// ════════════════════════════════════════════════════
+function generateBTPairs() {
+  const btPlayers = allPlayers.filter(p=>p.lombaArr.includes('Bulu Tangkis'));
+  const pool = shuffle(btPlayers);
+  const numPairs = Math.floor(pool.length / 2);
+  const pairs = Array.from({length: numPairs}, (_,i) => ({
+    id: i+1,
+    members: [pool[i*2], pool[i*2+1]]
+  }));
+  const standby = pool.slice(numPairs*2);
+  return { pairs, standby, total: btPlayers.length };
+}
+
+function generateAndRenderBT() {
+  const { pairs, standby, total } = generateBTPairs();
+  renderBTPairs(pairs, standby, total);
+}
+
+function renderBTPairs(pairs, standby, total) {
+  document.getElementById('bt-teams-summary').innerHTML =
+    `<span class="text-slate-300 font-medium">${pairs.length} pasangan</span> terbentuk dari ${total} peserta`;
+
+  document.getElementById('bt-teams-container').innerHTML = pairs.map((pair,i) => {
+    const color = TEAM_COLORS[i % TEAM_COLORS.length];
+    return `<div class="glass-strong rounded-2xl overflow-hidden">
+      <div class="team-stripe" style="background:${color}"></div>
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-display text-base font-600 text-white flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full" style="background:${color}"></div>
+            Pasangan ${pair.id}
+          </div>
+          <i class="fa-solid fa-person-running text-emerald-400 text-xs"></i>
+        </div>
+        <div class="space-y-2">
+          ${pair.members.map(m => `
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] px-2 py-0.5 rounded-full role-exp w-12 text-center shrink-0">BT</span>
+              <span class="text-sm text-slate-200 truncate flex-1" title="${m.nama}">${m.nama}</span>
+              <span class="text-xs text-slate-500 shrink-0">${m.blok}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="text-sm text-slate-500 col-span-full text-center py-8">Belum cukup peserta Bulu Tangkis (minimal 2 orang)</div>';
+
+  if (standby.length > 0) {
+    document.getElementById('bt-standby-section').innerHTML = `
+      <div class="glass rounded-2xl p-5 mb-4 border border-amber-500/20">
+        <div class="text-xs font-medium text-amber-400 uppercase tracking-wider mb-3">
+          <i class="fa-solid fa-hourglass-half mr-1.5"></i>Menunggu pasangan (${standby.length} orang)
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${standby.map(p=>`
+            <div class="glass rounded-lg px-3 py-1.5 text-xs text-slate-300 flex items-center gap-2">
+              <span>${p.nama}</span>
+              <span class="text-slate-500">${p.blok}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('bt-standby-section').innerHTML = '';
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  TEAMS — Catur 1v1 generator
+// ════════════════════════════════════════════════════
+function generateCaturMatches() {
+  const caturPlayers = allPlayers.filter(p=>p.lombaArr.includes('Catur'));
+  const pool = shuffle(caturPlayers);
+  const numMatches = Math.floor(pool.length / 2);
+  const matches = Array.from({length: numMatches}, (_,i) => ({
+    id: i+1,
+    p1: pool[i*2],
+    p2: pool[i*2+1]
+  }));
+  const bye = pool.slice(numMatches*2);
+  return { matches, bye, total: caturPlayers.length };
+}
+
+function generateAndRenderCatur() {
+  const { matches, bye, total } = generateCaturMatches();
+  renderCaturMatches(matches, bye, total);
+}
+
+function renderCaturMatches(matches, bye, total) {
+  document.getElementById('catur-teams-summary').innerHTML =
+    `<span class="text-slate-300 font-medium">${matches.length} pertandingan</span> terbentuk dari ${total} peserta`;
+
+  document.getElementById('catur-teams-container').innerHTML = matches.map((match,i) => {
+    const color = TEAM_COLORS[i % TEAM_COLORS.length];
+    return `<div class="glass-strong rounded-2xl overflow-hidden">
+      <div class="team-stripe" style="background:${color}"></div>
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="font-display text-base font-600 text-white flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full" style="background:${color}"></div>
+            Babak ${match.id}
+          </div>
+          <i class="fa-solid fa-chess text-amber-400 text-xs"></i>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 text-center">
+            <div class="text-sm text-slate-200 font-medium truncate" title="${match.p1.nama}">${match.p1.nama}</div>
+            <div class="text-[10px] text-slate-500">${match.p1.blok}</div>
+          </div>
+          <div class="font-display text-xs font-700 text-slate-500 px-2">VS</div>
+          <div class="flex-1 text-center">
+            <div class="text-sm text-slate-200 font-medium truncate" title="${match.p2.nama}">${match.p2.nama}</div>
+            <div class="text-[10px] text-slate-500">${match.p2.blok}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="text-sm text-slate-500 col-span-full text-center py-8">Belum cukup peserta Catur (minimal 2 orang)</div>';
+
+  if (bye.length > 0) {
+    document.getElementById('catur-standby-section').innerHTML = `
+      <div class="glass rounded-2xl p-5 mb-4 border border-amber-500/20">
+        <div class="text-xs font-medium text-amber-400 uppercase tracking-wider mb-3">
+          <i class="fa-solid fa-hourglass-half mr-1.5"></i>Bye / menunggu lawan (${bye.length} orang)
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${bye.map(p=>`
+            <div class="glass rounded-lg px-3 py-1.5 text-xs text-slate-300 flex items-center gap-2">
+              <span>${p.nama}</span>
+              <span class="text-slate-500">${p.blok}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('catur-standby-section').innerHTML = '';
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  TABS
+// ════════════════════════════════════════════════════
+function switchTab(btn, tab) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['peserta','ml','teams'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('hidden', t!==tab);
+  });
+  if (tab==='teams') {
+    generateAndRenderML();
+    generateAndRenderBT();
+    generateAndRenderCatur();
+  }
+}
+
+function switchTeamsSubtab(btn, sub) {
+  document.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['ml','bt','catur'].forEach(s => {
+    document.getElementById('teamsub-'+s).classList.toggle('hidden', s!==sub);
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function showToast(msg='Berhasil!', type='success') {
+  const t = document.getElementById('toast');
+  const icon = type==='warning' ? 'fa-triangle-exclamation text-amber-400' : 'fa-circle-check text-emerald-400';
+  t.querySelector('i').className = `fa-solid ${icon}`;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.remove('hide');
+  setTimeout(()=>t.classList.add('hide'), 3000);
+}
+
+// ════════════════════════════════════════════════════
+//  FALLBACK DATA (dipakai kalau Sheets tidak bisa diakses)
+// ════════════════════════════════════════════════════
+const FALLBACK_DATA = [
+  {nama:"Abdul Majid",blok:"F6/16",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Aloy",blok:"E3/12A",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"CATUR HARJANTO",blok:"D4/09",lombaArr:["Mobile Legend"],roleArr:["EXP","Gold"],ts:"08/06/2026"},
+  {nama:"Ali Budi",blok:"F6/14",lombaArr:["Catur","Mobile Legend"],roleArr:["EXP","Mid Lane"],ts:"08/06/2026"},
+  {nama:"Andry",blok:"F4/9",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Asri Arifin",blok:"F3/01",lombaArr:["Bulu Tangkis","Catur","Mobile Legend"],roleArr:["EXP","Roam"],ts:"08/06/2026"},
+  {nama:"REVAN SAPUTRA",blok:"D1/22",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"EDO",blok:"D3/05",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"AZZAM",blok:"D3/3A",lombaArr:["Mobile Legend"],roleArr:["Jungle","Mid Lane"],ts:"08/06/2026"},
+  {nama:"ANDHIKA",blok:"D2/11",lombaArr:["Mobile Legend"],roleArr:["Jungle","Roam"],ts:"08/06/2026"},
+  {nama:"REZA",blok:"D3/01",lombaArr:["Mobile Legend"],roleArr:["EXP","Roam"],ts:"08/06/2026"},
+  {nama:"Syarif",blok:"D3/3A",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Rojak",blok:"D1/19",lombaArr:["Bulu Tangkis","Catur"],roleArr:[],ts:"08/06/2026"},
+  {nama:"ARIF",blok:"D6/14",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Ferta",blok:"D3/05",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"ANDRI",blok:"D1/23",lombaArr:["Catur"],roleArr:[],ts:"08/06/2026"},
+  {nama:"M. Ridwansyah",blok:"E6/15",lombaArr:["Bulu Tangkis","Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"08/06/2026"},
+  {nama:"Muhammad Hatta",blok:"G3/3A",lombaArr:["Catur","Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"Rian asshobri",blok:"D6/7",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"Heri Santoso",blok:"F6/7",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Agus Andriawan",blok:"G2/16",lombaArr:["Bulu Tangkis","Catur","Mobile Legend"],roleArr:["Jungle","Gold"],ts:"08/06/2026"},
+  {nama:"Wandy",blok:"B2/12A",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"08/06/2026"},
+  {nama:"Khamim Basyir",blok:"F2/8",lombaArr:["Bulu Tangkis","Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"08/06/2026"},
+  {nama:"Eko .H",blok:"B2/9",lombaArr:["Mobile Legend"],roleArr:["EXP","Gold"],ts:"09/06/2026"},
+  {nama:"Saifur ridlo",blok:"G2/02",lombaArr:["Mobile Legend"],roleArr:["EXP","Roam"],ts:"09/06/2026"},
+  {nama:"Feri Dwi Herianto",blok:"G1/06",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"09/06/2026"},
+  {nama:"Ramadhan Cahyo",blok:"G4/07",lombaArr:["Catur"],roleArr:[],ts:"09/06/2026"},
+  {nama:"hendra gunawan",blok:"E4/33",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"09/06/2026"},
+  {nama:"Edo",blok:"D3/05",lombaArr:["Mobile Legend"],roleArr:["EXP","Gold"],ts:"09/06/2026"},
+  {nama:"Pikryanto",blok:"G2/7",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"09/06/2026"},
+  {nama:"ABDILLAH",blok:"F1/14",lombaArr:["Catur","Mobile Legend"],roleArr:["Mid Lane","Roam"],ts:"10/06/2026"},
+  {nama:"ari mulya desfi",blok:"E6/14",lombaArr:["Catur"],roleArr:[],ts:"10/06/2026"},
+  {nama:"Muhammad Rizky",blok:"G3/3",lombaArr:["Bulu Tangkis","Catur"],roleArr:[],ts:"11/06/2026"},
+  {nama:"Ahmad zaini",blok:"B2/18",lombaArr:["Catur"],roleArr:[],ts:"11/06/2026"},
+  {nama:"Kepino",blok:"E1/6",lombaArr:["Mobile Legend"],roleArr:["Jungle","Gold"],ts:"11/06/2026"},
+  {nama:"Ahmad Supardin",blok:"E1/05",lombaArr:["Bulu Tangkis","Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"11/06/2026"},
+  {nama:"ANGGA SYAIFULLAH",blok:"E3/19",lombaArr:["Bulu Tangkis","Mobile Legend"],roleArr:["EXP","Roam"],ts:"11/06/2026"},
+  {nama:"Diki",blok:"E312",lombaArr:["Catur","Mobile Legend"],roleArr:["Jungle","Gold"],ts:"11/06/2026"},
+  {nama:"Reza firmansyah",blok:"E6/37",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"11/06/2026"},
+  {nama:"Bondan",blok:"E5/12A",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"11/06/2026"},
+  {nama:"Muhammad Mulya",blok:"E1/17",lombaArr:["Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"11/06/2026"},
+  {nama:"Calvin",blok:"E6/10",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"11/06/2026"},
+  {nama:"Risqi Fardani",blok:"B2/06",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"11/06/2026"},
+  {nama:"M. Ridwansyah2",blok:"E6/15",lombaArr:["Bulu Tangkis","Catur","Mobile Legend"],roleArr:["Mid Lane","Gold"],ts:"11/06/2026"},
+  {nama:"Chairul",blok:"21 No 1",lombaArr:["Catur"],roleArr:[],ts:"11/06/2026"},
+  {nama:"Mulyadi",blok:"E3/29",lombaArr:["Bulu Tangkis"],roleArr:[],ts:"11/06/2026"},
+];
+
+// ════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
