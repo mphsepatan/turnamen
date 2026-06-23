@@ -1,711 +1,593 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Bagan Turnamen MPHS</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;600;700;900&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --gold:#F4C542;--gold2:#E08C00;--blue:#1A8FFF;--blue2:#0D5FBF;
-  --dark:#060B18;--dark2:#0C1427;--card:#101826;--border:#1A2D4A;
-  --green:#16A34A;--red:#DC2626;--purple:#7C3AED;
-  --text:#CBD5E1;--dim:#475569;
-  --brown:#92400E;--brown2:#78350F;--cream:#FEF3C7;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--dark);font-family:'Exo 2',sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden;}
-.bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(26,143,255,.12) 0%,transparent 70%),
-             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(244,197,66,.06) 0%,transparent 60%);}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MPHS Tournament Bracket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* ── NAV TABS ── */
-.nav-tabs{position:sticky;top:0;z-index:100;
-  background:rgba(6,11,24,.95);backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 16px;gap:4px;}
-.tab-btn{
-  padding:14px 20px;border:none;background:transparent;cursor:pointer;
-  font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
-  border-bottom:2px solid transparent;transition:all .2s;
-  display:flex;align-items:center;gap:8px;white-space:nowrap;
-}
-.tab-btn:hover{color:var(--text);}
-.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
-.tab-btn.chess.active{color:#A78BFA;border-bottom-color:#A78BFA;}
-.tab-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6;}
+        * { font-family: 'Inter', sans-serif; }
 
-/* ── HEADER ── */
-.page-header{
-  position:relative;z-index:10;
-  background:linear-gradient(180deg,#080E1E 0%,rgba(8,14,30,.96) 100%);
-  border-bottom:1px solid rgba(244,197,66,.2);
-  padding:16px 20px;
-  display:flex;align-items:center;gap:14px;
-}
-.logo-wrap{width:48px;height:48px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border-radius:12px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 24px rgba(244,197,66,.3);}
-.logo-wrap i{font-size:1.3rem;color:#0A0E1A;}
-.hdr-title{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:900;
-  background:linear-gradient(90deg,#fff 60%,var(--gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.04em;}
-.hdr-sub{font-size:.65rem;color:var(--dim);font-family:'Rajdhani',sans-serif;letter-spacing:.1em;margin-top:2px;}
-.hdr-eyebrow{font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
-.refresh-btn{margin-left:auto;flex-shrink:0;
-  display:flex;align-items:center;gap:6px;padding:8px 14px;
-  border-radius:8px;cursor:pointer;border:1px solid rgba(26,143,255,.3);
-  background:rgba(26,143,255,.08);color:#60A5FA;
-  font-family:'Rajdhani',sans-serif;font-size:.68rem;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;transition:all .2s;}
-.refresh-btn:hover{background:rgba(26,143,255,.18);}
-.refresh-btn.loading i{animation:spin .7s linear infinite;}
+        /* ── Bracket Layout ── */
+        .bracket-wrapper {
+            overflow-x: auto;
+            padding: 20px 10px 30px 10px;
+            background: #f1f5f9;
+            border-radius: 16px;
+        }
+        .bracket-container {
+            display: flex;
+            gap: 0;
+            min-width: max-content;
+            align-items: stretch;
+            padding: 10px 15px;
+        }
 
-/* ── STATUS BAR ── */
-.status-bar{
-  position:relative;z-index:10;
-  background:rgba(6,11,24,.7);border-bottom:1px solid var(--border);
-  padding:7px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-}
-.stat-chip{display:flex;align-items:center;gap:5px;
-  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;
-  letter-spacing:.08em;color:var(--dim);}
-.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.dot-u{background:#475569;}.dot-l{background:#EF4444;animation:pdot 1.2s infinite;}.dot-d{background:#22C55E;}
+        /* ── Round Column ── */
+        .round-column {
+            display: flex;
+            flex-direction: column;
+            min-width: 230px;
+            position: relative;
+            padding: 0 8px;
+        }
+        .round-header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
 
-/* ── SECTION (page) ── */
-.section{display:none;position:relative;z-index:5;}
-.section.active{display:block;}
+        /* ── Match Slot ── */
+        .match-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+            justify-content: center;
+            min-height: 80px;
+        }
 
-/* ── BRACKET SCROLL ── */
-.bracket-scroll{overflow-x:auto;padding:24px 16px 16px;-webkit-overflow-scrolling:touch;}
-.bracket-flex{display:flex;align-items:flex-start;gap:0;min-width:max-content;}
-.scroll-hint{display:none;align-items:center;gap:6px;
-  padding:6px 16px;font-size:.65rem;color:var(--dim);
-  font-family:'Rajdhani',sans-serif;letter-spacing:.06em;}
+        /* ── Match Card ── */
+        .match-card {
+            background: white;
+            border-radius: 10px;
+            padding: 8px 12px;
+            width: 100%;
+            max-width: 220px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #94a3b8;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .match-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+        }
+        .match-card.status-done    { border-left-color: #22c55e; background: #f0fdf4; }
+        .match-card.status-live    { border-left-color: #eab308; background: #fffbeb; animation: glow-live 1.5s infinite alternate; }
+        .match-card.status-upcoming{ border-left-color: #94a3b8; background: #f8fafc; }
 
-/* ── ROUND COL ── */
-.round-col{display:flex;flex-direction:column;}
-.round-header{text-align:center;margin-bottom:14px;
-  font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-  padding:5px 10px;border-radius:20px;white-space:nowrap;
-  background:rgba(26,143,255,.07);border:1px solid rgba(26,143,255,.15);color:var(--blue);}
-.round-header.gold{background:rgba(244,197,66,.08);border-color:rgba(244,197,66,.2);color:var(--gold);}
-.round-header.chess-rh{background:rgba(124,58,237,.07);border-color:rgba(124,58,237,.2);color:#A78BFA;}
+        @keyframes glow-live {
+            0%   { box-shadow: 0 0 5px rgba(234,179,8,0.2); }
+            100% { box-shadow: 0 0 20px rgba(234,179,8,0.5); }
+        }
 
-/* ── MATCH CARD ── */
-.mc-wrap{display:flex;align-items:center;}
-.match-card{width:158px;flex-shrink:0;background:var(--card);
-  border:1px solid var(--border);border-radius:10px;overflow:hidden;
-  transition:border-color .2s,box-shadow .2s;}
-.match-card:hover{border-color:rgba(26,143,255,.4);box-shadow:0 0 12px rgba(26,143,255,.1);}
-.match-card.has-live{border-color:rgba(220,38,38,.4);box-shadow:0 0 12px rgba(220,38,38,.1);}
-.match-card.chess-card{border-color:rgba(124,58,237,.25);}
-.match-card.chess-card:hover{border-color:rgba(124,58,237,.5);}
+        /* ── Teams inside card ── */
+        .team-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: 0.72rem;
+        }
+        .team-row + .team-row { border-top: 1px dashed #e2e8f0; margin-top: 2px; padding-top: 4px; }
+        .team-name {
+            font-weight: 500;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+        }
+        .team-name.bye    { color: #94a3b8; font-style: italic; }
+        .team-name.winner { color: #15803d; font-weight: 700; }
+        .team-score {
+            font-weight: 700;
+            color: #0f172a;
+            min-width: 24px;
+            text-align: center;
+            background: #f1f5f9;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 0.68rem;
+        }
+        .team-score.empty { background: transparent; color: #cbd5e1; }
 
-.mc-topbar{display:flex;justify-content:space-between;align-items:center;
-  padding:3px 8px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);}
-.mc-tag{font-family:'Rajdhani',sans-serif;font-size:.56rem;font-weight:700;
-  letter-spacing:.1em;color:#334155;text-transform:uppercase;}
-.mc-st{display:flex;align-items:center;gap:4px;}
-.mc-st-txt{font-family:'Rajdhani',sans-serif;font-size:.54rem;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;}
+        /* ── Status badge ── */
+        .status-badge {
+            font-size: 0.48rem;
+            padding: 1px 7px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .status-badge.upcoming { background: #e2e8f0; color: #64748b; }
+        .status-badge.done     { background: #bbf7d0; color: #166534; }
+        .status-badge.live     { background: #fde68a; color: #92400e; }
 
-.team-row{display:flex;align-items:center;gap:6px;padding:7px 8px;
-  border-top:1px solid rgba(26,45,74,.6);min-height:36px;
-  transition:background .15s;position:relative;}
-.team-row:hover{background:rgba(26,143,255,.04);}
-.team-row.winner{background:rgba(22,163,74,.1);}
-.team-row.loser{opacity:.4;}
-.team-row.bye-row{background:rgba(124,58,237,.08);}
+        .winner-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: #15803d;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px dashed #e2e8f0;
+            text-align: center;
+        }
 
-.team-num{width:18px;height:18px;flex-shrink:0;border-radius:5px;
-  background:var(--border);display:flex;align-items:center;justify-content:center;
-  font-size:.55rem;font-weight:800;color:#64748B;font-family:'Rajdhani',sans-serif;}
-.team-row.winner .team-num{background:rgba(22,163,74,.25);color:#4ADE80;}
-.team-row.bye-row .team-num{background:rgba(124,58,237,.2);color:#A78BFA;}
+        /* ── Connector lines ── */
+        /* horizontal line on right side of card → going to next column */
+        .match-slot::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            width: 8px;
+            height: 2px;
+            background: #94a3b8;
+            z-index: 0;
+        }
+        /* vertical bracket line between pairs — drawn by JS */
+        .v-line {
+            position: absolute;
+            width: 2px;
+            background: #94a3b8;
+            right: -8px;
+            z-index: 0;
+        }
+        .h-line-left {
+            position: absolute;
+            height: 2px;
+            background: #94a3b8;
+            left: -8px;
+            top: 50%;
+            width: 8px;
+            z-index: 0;
+        }
 
-.team-name{flex:1;font-size:.7rem;font-weight:700;
-  font-family:'Rajdhani',sans-serif;letter-spacing:.02em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#E2E8F0;}
-.team-row.bye-row .team-name{color:#A78BFA;font-style:italic;}
-.team-row.loser .team-name{color:#475569;}
-.team-row.winner .team-name{color:#fff;}
+        /* last column: no right connectors */
+        .round-column:last-child .match-slot::after { display: none; }
+        .round-column:last-child .v-line            { display: none; }
 
-.team-score{font-size:.82rem;font-weight:900;font-family:'Rajdhani',sans-serif;
-  min-width:16px;text-align:center;flex-shrink:0;}
-.sc-w{color:#4ADE80;}.sc-l{color:#F87171;}
+        /* ── Tabs ── */
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border: 2px solid transparent;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+        .tab-btn:hover  { background: #f8fafc; border-color: #cbd5e1; }
+        .tab-btn.active { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
 
-.winner-badge{position:absolute;left:-3px;top:50%;transform:translateY(-50%);
-  width:4px;height:60%;background:var(--green);border-radius:0 3px 3px 0;}
-.bye-tag{font-family:'Rajdhani',sans-serif;font-size:.52rem;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase;
-  background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.35);
-  border-radius:20px;padding:1px 6px;color:#A78BFA;flex-shrink:0;}
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .round-column  { min-width: 160px; }
+            .team-name     { max-width: 90px; font-size: 0.62rem; }
+            .match-card    { padding: 5px 8px; }
+            .round-header  { font-size: 0.62rem; padding: 5px 10px; }
+        }
 
-/* ── CONNECTORS ── */
-.conn-top{width:14px;border-top:2px solid var(--border);border-right:2px solid var(--border);border-radius:0 5px 0 0;}
-.conn-bot{width:14px;border-bottom:2px solid var(--border);border-right:2px solid var(--border);border-radius:0 0 5px 0;}
-
-/* ── CHAMPION BOX ── */
-.champ-col{display:flex;flex-direction:column;padding-top:38px;}
-.champ-box{width:158px;
-  background:linear-gradient(135deg,rgba(244,197,66,.1),rgba(244,197,66,.03));
-  border:1.5px solid rgba(244,197,66,.5);border-radius:14px;padding:18px 12px;
-  text-align:center;box-shadow:0 0 28px rgba(244,197,66,.14);}
-.champ-icon{font-size:1.8rem;margin-bottom:7px;}
-.champ-label{font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
-.champ-name{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:900;color:#fff;line-height:1.2;}
-.champ-tbd{color:#1E3A5A;font-size:.75rem;}
-
-/* ── CHESS CHAMP BOX ── */
-.champ-box.chess-champ{
-  background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(124,58,237,.03));
-  border-color:rgba(124,58,237,.5);box-shadow:0 0 28px rgba(124,58,237,.12);}
-.champ-box.chess-champ .champ-label{color:#A78BFA;}
-
-/* ── 3rd PLACE ── */
-.third-section{position:relative;z-index:5;
-  border-top:1px solid var(--border);margin:8px 16px 0;padding:20px 0;}
-.section-label{display:flex;align-items:center;gap:8px;
-  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:14px;}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* ── CHESS GRID (mobile-first) ── */
-.chess-grid{padding:20px 16px;display:grid;gap:10px;
-  grid-template-columns:1fr;}
-@media(min-width:540px){.chess-grid{grid-template-columns:1fr 1fr;}}
-@media(min-width:900px){.chess-grid{grid-template-columns:1fr 1fr 1fr;}}
-
-.chess-match{background:var(--card);border:1px solid rgba(124,58,237,.2);
-  border-radius:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
-.chess-match:hover{border-color:rgba(124,58,237,.4);box-shadow:0 0 10px rgba(124,58,237,.1);}
-.chess-match.has-live{border-color:rgba(220,38,38,.4);}
-
-.cm-top{display:flex;justify-content:space-between;align-items:center;
-  padding:4px 10px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);}
-.cm-tag{font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;
-  letter-spacing:.1em;color:#475569;text-transform:uppercase;}
-
-.chess-team-row{display:flex;align-items:center;gap:7px;padding:8px 10px;
-  border-top:1px solid rgba(26,45,74,.6);min-height:38px;transition:background .15s;position:relative;}
-.chess-team-row.winner{background:rgba(22,163,74,.1);}
-.chess-team-row.loser{opacity:.4;}
-
-.chess-seed{width:20px;height:20px;flex-shrink:0;border-radius:6px;
-  background:var(--border);display:flex;align-items:center;justify-content:center;
-  font-size:.58rem;font-weight:800;color:#64748B;font-family:'Rajdhani',sans-serif;}
-.chess-team-row.winner .chess-seed{background:rgba(22,163,74,.25);color:#4ADE80;}
-
-.chess-player-name{flex:1;font-size:.72rem;font-weight:700;
-  font-family:'Rajdhani',sans-serif;color:#E2E8F0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chess-team-row.winner .chess-player-name{color:#fff;}
-.chess-team-row.loser .chess-player-name{color:#475569;}
-
-.chess-score{font-size:.85rem;font-weight:900;font-family:'Rajdhani',sans-serif;
-  min-width:18px;text-align:center;flex-shrink:0;}
-.chess-winner-badge{position:absolute;left:-3px;top:50%;transform:translateY(-50%);
-  width:4px;height:60%;background:var(--green);border-radius:0 3px 3px 0;}
-
-/* ── BYE CARD ── */
-.bye-card{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);
-  border-radius:10px;padding:12px;
-  font-family:'Rajdhani',sans-serif;font-size:.68rem;color:#A78BFA;
-  display:flex;align-items:center;gap:8px;}
-
-/* ── LOADING ── */
-#loading{position:fixed;inset:0;z-index:999;background:var(--dark);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .5s;}
-.load-ring{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);
-  border-radius:50%;animation:spin .8s linear infinite;}
-.load-text{font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;
-  letter-spacing:.18em;color:var(--dim);text-transform:uppercase;}
-
-/* ── FOOTER ── */
-footer{position:relative;z-index:5;border-top:1px solid var(--border);
-  padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-.footer-copy{font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:#1E3A5A;}
-.footer-brand{font-family:'Rajdhani',sans-serif;font-size:.66rem;font-weight:700;
-  letter-spacing:.08em;color:var(--gold);opacity:.7;}
-
-@keyframes spin{to{transform:rotate(360deg);}}
-@keyframes pdot{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeIn .35s ease forwards;}
-
-@media(max-width:600px){
-  .scroll-hint{display:flex;}
-  .hdr-title{font-size:1.2rem;}
-  .tab-btn{padding:12px 14px;font-size:.7rem;}
-}
-</style>
+        /* ── Error / Empty ── */
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 10px;
+            padding: 16px 24px;
+            margin: 20px auto;
+            max-width: 480px;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen p-4 md:p-6">
+<div class="max-w-7xl mx-auto">
 
-<div class="bg-layer"></div>
-<div id="loading"><div class="load-ring"></div><p class="load-text">Memuat Bagan…</p></div>
-
-<!-- ═══ HEADER ═══ -->
-<div class="page-header">
-  <div class="logo-wrap"><i class="fas fa-trophy"></i></div>
-  <div>
-    <div class="hdr-eyebrow"><i class="fas fa-star"></i> MPHS Tournament 2026</div>
-    <div class="hdr-title">TURNAMEN MPHS</div>
-    <div class="hdr-sub">Mobile Legends · Catur · Single Elimination</div>
-  </div>
-  <button class="refresh-btn" id="ref-btn" onclick="refreshAll()">
-    <i class="fas fa-rotate-right"></i> Refresh
-  </button>
-</div>
-
-<!-- ═══ NAV TABS ═══ -->
-<div class="nav-tabs">
-  <button class="tab-btn active" id="tab-ml" onclick="switchTab('ml')">
-    <div class="tab-dot"></div> Mobile Legends
-  </button>
-  <button class="tab-btn chess" id="tab-chess" onclick="switchTab('chess')">
-    <div class="tab-dot"></div> Catur
-  </button>
-</div>
-
-<!-- ═══ STATUS BAR ═══ -->
-<div class="status-bar" id="status-bar">
-  <div class="stat-chip"><div class="dot dot-u"></div>Belum: <strong id="cnt-up" style="color:#CBD5E1">–</strong></div>
-  <div class="stat-chip"><div class="dot dot-l"></div>Live: <strong id="cnt-live" style="color:#FCA5A5">–</strong></div>
-  <div class="stat-chip"><div class="dot dot-d"></div>Selesai: <strong id="cnt-done" style="color:#86EFAC">–</strong></div>
-  <div class="stat-chip" style="margin-left:auto" id="bye-chip"><div class="dot" style="background:#A78BFA"></div>BYE: –</div>
-</div>
-
-<div class="scroll-hint" id="scroll-hint" style="display:none"><i class="fas fa-arrows-left-right"></i>&nbsp;Geser kanan untuk bagan lengkap</div>
-
-<!-- ═══ ML SECTION ═══ -->
-<div class="section active" id="sec-ml">
-  <div class="bracket-scroll">
-    <div class="bracket-flex" id="bracket-ml"></div>
-  </div>
-  <div class="third-section" id="third-sec" style="display:none">
-    <div class="section-label"><i class="fas fa-medal" style="color:#CD7F32"></i>Perebutan Juara 3</div>
-    <div id="third-match"></div>
-  </div>
-</div>
-
-<!-- ═══ CHESS SECTION ═══ -->
-<div class="section" id="sec-chess">
-  <div class="chess-grid" id="chess-grid"></div>
-  <div class="third-section" id="chess-third-sec" style="display:none">
-    <div class="section-label"><i class="fas fa-medal" style="color:#CD7F32"></i>Perebutan Juara 3 (Catur)</div>
-    <div id="chess-third-match"></div>
-  </div>
-  <!-- Chess bracket -->
-  <div style="border-top:1px solid var(--border);margin:0 16px;padding:20px 0 0;">
-    <div class="section-label"><i class="fas fa-sitemap"></i>Bagan Eliminasi Catur</div>
-  </div>
-  <div class="bracket-scroll">
-    <div class="bracket-flex" id="bracket-chess"></div>
-  </div>
-  <!-- BYE info -->
-  <div style="padding:0 16px 16px;">
-    <div class="bye-card fade-in">
-      <i class="fas fa-chess-king" style="font-size:1.1rem"></i>
-      <div><strong style="color:#fff">Muhammad yudhi pranata</strong> mendapat BYE — langsung lolos ke babak selanjutnya.</div>
+    <!-- LOGO -->
+    <div class="flex justify-center mb-4">
+        <img src="https://raw.githubusercontent.com/mphsepatan/paguyuban/refs/heads/main/assets/img/logo.png"
+             alt="MPHS Logo"
+             class="h-20 w-auto object-contain drop-shadow-md" />
     </div>
-  </div>
-</div>
 
-<!-- ═══ FOOTER ═══ -->
-<footer>
-  <div class="footer-copy">MPHS Tournament · 2026</div>
-  <div style="color: white; font-weight: bold;" class="footer-brand"><i class="fas fa-copyright"></i> Ryuzel</div>
-</footer>
+    <!-- HEADER -->
+    <div class="flex flex-wrap items-center justify-between bg-white rounded-2xl shadow-md p-4 mb-5 border-l-4 border-blue-600">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-trophy text-3xl text-yellow-500"></i>
+            <div>
+                <h1 class="text-xl font-bold text-gray-800 leading-tight">MPHS Tournament</h1>
+                <span class="text-xs text-gray-400 font-medium">Bracket Turnamen</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500 mt-2 sm:mt-0">
+            <i class="fas fa-clock text-blue-400"></i>
+            <span>Update: <span id="updateTime" class="font-semibold text-gray-700">—</span></span>
+            <button onclick="loadTab(currentTab)" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                <i class="fas fa-redo text-xs"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="flex flex-wrap gap-2 mb-5" id="tabContainer">
+        <button class="tab-btn active" onclick="loadTab('Mobile Legend')" data-tab="Mobile Legend">
+            <i class="fas fa-gamepad text-purple-600"></i> Mobile Legend
+        </button>
+        <button class="tab-btn" onclick="loadTab('Catur')" data-tab="Catur">
+            <i class="fas fa-chess text-green-700"></i> Catur
+        </button>
+        <button class="tab-btn" onclick="loadTab('Bulu Tangkis')" data-tab="Bulu Tangkis">
+            <i class="fas fa-feather text-orange-500"></i> Bulu Tangkis
+        </button>
+    </div>
+
+    <!-- BRACKET AREA -->
+    <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+        <div id="loadingArea" class="flex justify-center items-center py-20 gap-3">
+            <i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i>
+            <span class="text-gray-500 text-base">Memuat data dari Google Sheets...</span>
+        </div>
+        <div id="bracketArea" class="hidden">
+            <div class="bracket-wrapper">
+                <div id="bracketContainer" class="bracket-container"></div>
+            </div>
+        </div>
+        <div id="errorArea" class="hidden"></div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="mt-5 flex flex-wrap justify-center gap-6 text-xs text-gray-500">
+        <span><span class="inline-block w-3 h-3 rounded-full bg-green-500 mr-1.5"></span>Selesai</span>
+        <span><span class="inline-block w-3 h-3 rounded-full bg-yellow-400 animate-pulse mr-1.5"></span>Sedang Berlangsung</span>
+        <span><span class="inline-block w-3 h-3 rounded-full bg-gray-300 mr-1.5"></span>Mendatang</span>
+        <span class="text-yellow-600"><i class="fas fa-crown mr-1"></i>Pemenang</span>
+    </div>
+
+    <!-- DATA SOURCE NOTE -->
+    <p class="text-center text-xs text-gray-400 mt-3">
+        <i class="fas fa-table mr-1"></i>
+        Data diambil langsung dari Google Sheets · Auto-refresh setiap 60 detik
+    </p>
+
+    <!-- COPYRIGHT -->
+    <p class="text-center text-xs text-gray-400 mt-2 pb-4">
+        &copy; 2026 <span class="font-semibold text-gray-500">Ryuzel</span>. All rights reserved.
+    </p>
+
+</div>
 
 <script>
-// ═══════════════════════════════════════
-// SHEET CONFIG
-// ═══════════════════════════════════════
-const ML_SHEET_ID   = '1uhvvUrRCef7sGnzviEViSc1-_ifZ5JNlhkknxKmIJs8';
-const ML_SHEET_NAME = 'Mobile Legend';
+// ============================================================
+// KONFIGURASI — ganti SPREADSHEET_ID jika perlu
+// ============================================================
+const SPREADSHEET_ID = '1uhvvUrRCef7sGnzviEViSc1-_ifZ5JNlhkknxKmIJs8';
 
-// ── ML FALLBACK DATA ──
-const ML_FALLBACK = [
-  {round:'R16',match:1,t1:'Tim 7',  s1:'',t2:'Tim 2',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'R16',match:2,t1:'Tim 4',  s1:'',t2:'Tim 3',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'R16',match:3,t1:'Tim 9',  s1:'',t2:'Tim 10', s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'R16',match:4,t1:'Tim 5',  s1:'',t2:'Tim 11', s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'R16',match:5,t1:'Tim 6',  s1:'',t2:'Tim 8',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'R16',match:6,t1:'Tim 1',  s1:'',t2:'BYE',    s2:'',status:'done',    winner:'Tim 1',bye:true},
-  {round:'QF', match:1,t1:'W. M1',  s1:'',t2:'W. M2',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'QF', match:2,t1:'W. M3',  s1:'',t2:'W. M4',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'QF', match:3,t1:'W. M5',  s1:'',t2:'Tim 1',  s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'SF', match:1,t1:'W. QF1', s1:'',t2:'W. QF2', s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'SF', match:2,t1:'W. QF3', s1:'',t2:'',        s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'F',  match:1,t1:'W. SF1', s1:'',t2:'W. SF2', s2:'',status:'upcoming',winner:'',bye:false},
-  {round:'3rd',match:1,t1:'L. SF1', s1:'',t2:'L. SF2', s2:'',status:'upcoming',winner:'',bye:false},
-];
-
-// ── CHESS DATA (13 babak: 12 pertandingan + 1 BYE) ──
-// Sesuai gambar: Babak 1-12 punya Pemain1 vs Pemain2, BYE = M. yudhi pranata
-const CHESS_R1 = [
-  {match:1, t1:'ABDILLAH',           t2:'Sukarman',                  s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:2, t1:'M. Luthfi Hidayat',  t2:'Kevin Cesar Renaldi (Renal)',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:3, t1:'Wahyu.DP',           t2:'Nopi Nurilham',             s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:4, t1:'Agus Andriawan',     t2:'Ramadhan Cahyo Nugroho',    s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:5, t1:'ari mulya desfi',    t2:'Rojak',                     s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:6, t1:'Wahyu',             t2:'Muhammad Rizky',             s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:7, t1:'Asri Arifin',       t2:'Rofy Zulkifli',             s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:8, t1:'Muhammad Hatta',    t2:'ANDRI',                      s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:9, t1:'Diki',              t2:'HILLAR',                     s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:10,t1:'irham',             t2:'m. ridwan',                  s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:11,t1:'Udin.',             t2:'Chairul',                    s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:12,t1:'Ahmad zaini',       t2:'M. Ridwansyah',              s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-];
-const CHESS_BYE = {name:'Muhammad yudhi pranata'};
-
-// QF: 12 winner + 1 BYE = 13 → 6 QF matches + BYE advances (winner of R1 M6 vs BYE)
-// For simplicity we model: R1 (12 matches), then QF (6 matches: W1vsW2, W3vsW4, W5vsW6, W7vsW8, W9vsW10, W11 vs W.BYE, W12 bye-advance)
-// Actually: 13 players → R1 yields 12W + BYE_player = 13 → need 1 more bye in QF
-// Let's do: QF: 6 matches (W1vsW2, W3vsW4, W5vsW6, W7vsW8, W9vsW10, W11vsW12), BYE advances separately
-// Then SF: 4 (from 6 QF W + BYE = 7? ... simplify: QF winner of 6 matches + BYE = 7 → need another bye)
-// Simple approach: treat as 13-player bracket naturally
-// R1: 12 matches → 12 winners. Plus BYE player. Total 13. 
-// QF: pair them: M1 vs M2, M3 vs M4, M5 vs M6, M7 vs M8, M9 vs M10, M11 vs M12, M.BYE gets bye again → 7 advance
-// SF: 4 matches from 7: M1 vs M2, M3 vs M4, M5 vs M6, M7 (BYE) bye → 4 advance
-// QF: 4 matches → 4 QF winners → SF: 2 → Final 1
-
-const CHESS_QF = [
-  {match:1,t1:'W. B1',t2:'W. B2', s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:2,t1:'W. B3',t2:'W. B4', s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:3,t1:'W. B5',t2:'W. B6', s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:4,t1:'W. B7',t2:'W. B8', s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:5,t1:'W. B9',t2:'W. B10',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:6,t1:'W. B11',t2:'W. B12',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:7,t1:'Yudhi (BYE)',t2:'BYE',s1:'',s2:'',status:'done',winner:'Yudhi (BYE)',bye:true},
-];
-const CHESS_SF = [
-  {match:1,t1:'W. QF1',t2:'W. QF2',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:2,t1:'W. QF3',t2:'W. QF4',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:3,t1:'W. QF5',t2:'W. QF6',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:4,t1:'Yudhi (BYE)',t2:'BYE', s1:'',s2:'',status:'done',winner:'Yudhi (BYE)',bye:true},
-];
-const CHESS_QF2 = [
-  {match:1,t1:'W. SF1',t2:'W. SF2',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-  {match:2,t1:'W. SF3',t2:'W. SF4',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-];
-const CHESS_F = [
-  {match:1,t1:'W. QF2-1',t2:'W. QF2-2',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-];
-const CHESS_3RD = [
-  {match:1,t1:'L. QF2-1',t2:'L. QF2-2',s1:'',s2:'',status:'upcoming',winner:'',bye:false},
-];
-
-let ML_DATA = ML_FALLBACK;
-
-// ═══════════════════════════════════════
-// FETCH
-// ═══════════════════════════════════════
-async function fetchML(){
-  const url=`https://docs.google.com/spreadsheets/d/${ML_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(ML_SHEET_NAME)}`;
-  const res=await fetch(url);
-  if(!res.ok)throw new Error('HTTP '+res.status);
-  const txt=await res.text();
-  const json=JSON.parse(txt.substring(47).slice(0,-2));
-  const rows=json.table.rows;
-  if(!rows||!rows.length)throw new Error('Sheet kosong');
-  const v=(c,i)=>(c[i]&&c[i].v!=null)?String(c[i].v).trim():'';
-  return rows.map(r=>({
-    round:v(r.c,0),match:parseInt(v(r.c,1))||0,
-    t1:v(r.c,2),s1:v(r.c,3),t2:v(r.c,4),s2:v(r.c,5),
-    status:v(r.c,6).toLowerCase()||'upcoming',winner:v(r.c,7),
-    bye:v(r.c,8).toLowerCase()==='true',
-  })).filter(r=>r.round);
-}
-
-// ═══════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════
-function seed(n){
-  if(!n||n==='-'||n==='BYE')return'?';
-  const m=n.match(/\d+/);if(m)return m[0];
-  return n.trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-}
-
-function statusDot(s){
-  return s==='live'?'dot-l':s==='done'?'dot-d':'dot-u';
-}
-function statusTxt(s){return s==='live'?'LIVE':s==='done'?'DONE':'–';}
-function statusColor(s){return s==='live'?'#FCA5A5':s==='done'?'#86EFAC':'#475569';}
-
-function matchCard(m,chess=false){
-  const t1W=m.status==='done'&&m.winner===m.t1;
-  const t2W=m.status==='done'&&m.winner===m.t2;
-  const isBye=m.bye||m.t2==='BYE'||!m.t2;
-  const rTag=chess?'B':({R16:'M',QF:'QF',SF:'SF',F:'F','3rd':'3P'})[m.round]||'M';
-
-  function row(name,score,isW,isL,byeRow){
-    const rc=byeRow?'bye-row':isW?'winner':isL?'loser':'';
-    const sc=score!==''?(isW?'sc-w':'sc-l'):'';
-    return `<div class="team-row ${rc}">
-      ${isW?'<div class="winner-badge"></div>':''}
-      <div class="team-num">${seed(name)}</div>
-      <span class="team-name">${name||'TBD'}</span>
-      ${byeRow?'<span class="bye-tag">BYE</span>':`<span class="team-score ${sc}">${score}</span>`}
-    </div>`;
-  }
-
-  return `<div class="match-card ${m.status==='live'?'has-live':''} ${chess?'chess-card':''}">
-    <div class="mc-topbar">
-      <span class="mc-tag">${rTag}${m.match}</span>
-      <div class="mc-st"><div class="dot ${statusDot(m.status)}"></div>
-        <span class="mc-st-txt" style="color:${statusColor(m.status)}">${statusTxt(m.status)}</span>
-      </div>
-    </div>
-    ${row(m.t1,m.s1,t1W,t2W&&m.status==='done',false)}
-    ${isBye?row('BYE','',false,false,true):row(m.t2,m.s2,t2W,t1W&&m.status==='done',false)}
-  </div>`;
-}
-
-function connector(count,slotH){
-  let h='<div style="display:flex;flex-direction:column;width:28px;">';
-  for(let i=0;i<count;i+=2){
-    const ah=slotH/2;
-    h+=`<div style="display:flex;flex-direction:column;align-items:flex-end;height:${slotH*2}px;">
-      <div class="conn-top" style="height:${ah}px;"></div>
-      <div class="conn-bot" style="height:${ah}px;"></div>
-    </div>`;
-    if(i+2<count)h+='<div style="height:0"></div>';
-  }
-  return h+'</div>';
-}
-
-// ═══════════════════════════════════════
-// RENDER ML
-// ═══════════════════════════════════════
-function renderML(data){
-  const byRound={R16:[],QF:[],SF:[],F:[]};
-  const third=[];
-  data.forEach(m=>{
-    if(m.round==='3rd')third.push(m);
-    else if(byRound[m.round])byRound[m.round].push(m);
-  });
-  Object.values(byRound).forEach(a=>a.sort((x,y)=>x.match-y.match));
-
-  const ROUNDS=['R16','QF','SF','F'];
-  const LABELS={R16:'Babak 1',QF:'Perempat Final',SF:'Semifinal',F:'Final'};
-  const ICONS=['gamepad','shield-halved','bolt','trophy'];
-
-  const allM=data.filter(m=>m.round!=='3rd');
-  document.getElementById('cnt-up').textContent=allM.filter(m=>m.status==='upcoming').length;
-  document.getElementById('cnt-live').textContent=allM.filter(m=>m.status==='live').length;
-  document.getElementById('cnt-done').textContent=allM.filter(m=>m.status==='done').length;
-  document.getElementById('bye-chip').innerHTML=`<div class="dot" style="background:#A78BFA"></div>BYE: Tim 1`;
-
-  const champ=byRound['F'][0]?.winner||'';
-  let html='';
-
-  ROUNDS.forEach((rnd,ri)=>{
-    const matches=byRound[rnd];
-    if(!matches.length)return;
-    const isF=rnd==='F';
-    const spacing=ri===0?0:ri===1?88:ri===2?250:0;
-    html+=`<div class="round-col" style="padding-top:38px;">
-      <div class="round-header ${isF?'gold':''}">
-        <i class="fas fa-${ICONS[ri]} mr-1"></i>${LABELS[rnd]}
-      </div>`;
-    matches.forEach((m,mi)=>{
-      if(mi>0)html+=`<div style="height:${spacing}px"></div>`;
-      html+=`<div class="mc-wrap fade-in">${matchCard(m)}</div>`;
-    });
-    html+='</div>';
-
-    if(ri<ROUNDS.length-1){
-      const next=byRound[ROUNDS[ri+1]];
-      if(!next.length)return;
-      const cSlotH=(80+spacing)*2;
-      const pairs=Math.ceil(matches.length/2);
-      html+=`<div style="padding-top:38px;"><div style="height:24px;"></div><div style="display:flex;flex-direction:column;width:28px;">`;
-      for(let p=0;p<pairs;p++){
-        if(p>0)html+=`<div style="height:${spacing}px"></div>`;
-        html+=`<div style="display:flex;flex-direction:column;align-items:flex-end;height:${cSlotH}px;">
-          <div class="conn-top" style="height:${cSlotH/2}px;"></div>
-          <div class="conn-bot" style="height:${cSlotH/2}px;"></div>
-        </div>`;
-      }
-      html+=`</div></div>`;
+// Nama sheet di Google Sheets (harus sama persis)
+const SHEET_CONFIG = {
+    'Mobile Legend': {
+        sheetName: 'Mobile Legend',
+        icon: 'fa-gamepad',
+        iconColor: 'text-purple-600'
+    },
+    'Catur': {
+        sheetName: 'Catur',
+        icon: 'fa-chess',
+        iconColor: 'text-green-700'
+    },
+    'Bulu Tangkis': {
+        sheetName: 'Bulu Tangkis',
+        icon: 'fa-feather',
+        iconColor: 'text-orange-500'
     }
-  });
+};
 
-  html+=`<div class="champ-col">
-    <div class="round-header gold" style="text-align:center;margin-bottom:14px;"><i class="fas fa-crown mr-1"></i>Juara</div>
-    <div class="champ-box"><div class="champ-icon">👑</div>
-      <div class="champ-label">Champion</div>
-      <div class="champ-name">${champ||'<span class="champ-tbd">TBD</span>'}</div>
-    </div>
-  </div>`;
+// Round metadata (urutan, label, ikon)
+const ROUND_META = {
+    'R32':  { label: 'Babak 32 Besar', icon: 'fa-arrow-right' },
+    'R16':  { label: 'Babak 16 Besar', icon: 'fa-arrow-right' },
+    'QF':   { label: 'Perempat Final', icon: 'fa-chess-queen' },
+    'SF':   { label: 'Semifinal',       icon: 'fa-star' },
+    'F':    { label: 'Final',           icon: 'fa-trophy' },
+    '3rd':  { label: 'Perebutan 3',     icon: 'fa-medal' }
+};
+const ROUND_ORDER = ['R32', 'R16', 'QF', 'SF', 'F', '3rd'];
 
-  document.getElementById('bracket-ml').innerHTML=html;
+let currentTab = 'Mobile Legend';
 
-  if(third.length){
-    document.getElementById('third-sec').style.display='block';
-    document.getElementById('third-match').innerHTML=`<div class="mc-wrap fade-in">${matchCard(third[0])}</div>`;
-  }
+// ============================================================
+// FETCH DATA DARI GOOGLE SHEETS via CSV export
+// Pakai URL: https://docs.google.com/spreadsheets/d/{ID}/gviz/tq?tqx=out:csv&sheet={SHEET}
+// ============================================================
+async function fetchSheetCSV(sheetName) {
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} saat mengambil sheet "${sheetName}"`);
+    return await res.text();
 }
 
-// ═══════════════════════════════════════
-// RENDER CHESS
-// ═══════════════════════════════════════
-function renderChess(){
-  // Grid cards for R1
-  const g=document.getElementById('chess-grid');
-  let gh='<div class="section-label" style="grid-column:1/-1"><i class="fas fa-chess-pawn"></i>Babak Pertama (12 Pertandingan)</div>';
-  CHESS_R1.forEach(m=>{
-    const t1W=m.status==='done'&&m.winner===m.t1;
-    const t2W=m.status==='done'&&m.winner===m.t2;
-    gh+=`<div class="chess-match ${m.status==='live'?'has-live':''} fade-in">
-      <div class="cm-top">
-        <span class="cm-tag"><i class="fas fa-chess-knight" style="margin-right:4px"></i>Babak ${m.match}</span>
-        <div class="mc-st"><div class="dot ${statusDot(m.status)}"></div>
-          <span class="mc-st-txt" style="color:${statusColor(m.status)}">${statusTxt(m.status)}</span>
-        </div>
-      </div>
-      ${chessRow(m.t1,m.s1,t1W,t2W&&m.status==='done')}
-      ${chessRow(m.t2,m.s2,t2W,t1W&&m.status==='done')}
-    </div>`;
-  });
-  g.innerHTML=gh;
+// ============================================================
+// PARSE CSV → array of objects
+// ============================================================
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    if (lines.length < 2) return [];
 
-  // Bracket
-  const CROUNDS=[
-    {key:'QF', label:'Perempat Final', data:CHESS_QF, icon:'shield-halved'},
-    {key:'SF', label:'Semifinal',      data:CHESS_SF, icon:'bolt'},
-    {key:'QF2',label:'Babak 4',        data:CHESS_QF2,icon:'shield-halved'},
-    {key:'F',  label:'Final',          data:CHESS_F,  icon:'trophy'},
-  ];
-
-  let bh='';
-  CROUNDS.forEach((rnd,ri)=>{
-    const isF=rnd.key==='F';
-    const spacing=ri===0?0:ri===1?88:ri===2?250:0;
-    bh+=`<div class="round-col" style="padding-top:38px;">
-      <div class="round-header ${isF?'gold':'chess-rh'}">
-        <i class="fas fa-${rnd.icon} mr-1"></i>${rnd.label}
-      </div>`;
-    rnd.data.forEach((m,mi)=>{
-      m.round=rnd.key;
-      if(mi>0)bh+=`<div style="height:${spacing}px"></div>`;
-      bh+=`<div class="mc-wrap fade-in">${matchCard(m,true)}</div>`;
-    });
-    bh+='</div>';
-
-    if(ri<CROUNDS.length-1){
-      const next=CROUNDS[ri+1];
-      const cSlotH=(80+spacing)*2;
-      const pairs=Math.ceil(rnd.data.length/2);
-      bh+=`<div style="padding-top:38px;"><div style="height:24px;"></div><div style="display:flex;flex-direction:column;width:28px;">`;
-      for(let p=0;p<pairs;p++){
-        if(p>0)bh+=`<div style="height:${spacing}px"></div>`;
-        bh+=`<div style="display:flex;flex-direction:column;align-items:flex-end;height:${cSlotH}px;">
-          <div class="conn-top" style="height:${cSlotH/2}px;"></div>
-          <div class="conn-bot" style="height:${cSlotH/2}px;"></div>
-        </div>`;
-      }
-      bh+=`</div></div>`;
+    // Parse satu baris CSV (handle quoted fields)
+    function parseLine(line) {
+        const result = [];
+        let cur = '', inQuote = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
+                else inQuote = !inQuote;
+            } else if (ch === ',' && !inQuote) {
+                result.push(cur.trim()); cur = '';
+            } else {
+                cur += ch;
+            }
+        }
+        result.push(cur.trim());
+        return result;
     }
-  });
 
-  const champC=CHESS_F[0]?.winner||'';
-  bh+=`<div class="champ-col">
-    <div class="round-header gold" style="text-align:center;margin-bottom:14px;"><i class="fas fa-crown mr-1"></i>Juara</div>
-    <div class="champ-box chess-champ"><div class="champ-icon">♛</div>
-      <div class="champ-label">Champion</div>
-      <div class="champ-name">${champC||'<span class="champ-tbd">TBD</span>'}</div>
-    </div>
-  </div>`;
-
-  document.getElementById('bracket-chess').innerHTML=bh;
-
-  if(CHESS_3RD.length){
-    document.getElementById('chess-third-sec').style.display='block';
-    CHESS_3RD[0].round='3rd';
-    document.getElementById('chess-third-match').innerHTML=`<div class="mc-wrap fade-in">${matchCard(CHESS_3RD[0],true)}</div>`;
-  }
+    const headers = parseLine(lines[0]);
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const vals = parseLine(lines[i]);
+        const obj = {};
+        headers.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
+        rows.push(obj);
+    }
+    return rows;
 }
 
-function chessRow(name,score,isW,isL){
-  const rc=isW?'winner':isL?'loser':'';
-  const sc=score!==''?(isW?'sc-w':'sc-l'):'';
-  return `<div class="chess-team-row ${rc}">
-    ${isW?'<div class="chess-winner-badge"></div>':''}
-    <div class="chess-seed">${seed(name)}</div>
-    <span class="chess-player-name">${name||'TBD'}</span>
-    <span class="chess-score ${sc}">${score}</span>
-  </div>`;
+// ============================================================
+// CONVERT RAW ROWS → structured rounds
+// ============================================================
+function buildRounds(rows) {
+    // Filter baris yang punya kolom Round & Match valid
+    const matchRows = rows.filter(r => r['Round'] && r['Match'] && !isNaN(parseFloat(r['Match'])));
+
+    // Group by round
+    const grouped = {};
+    matchRows.forEach(r => {
+        const round = r['Round'].trim();
+        if (!grouped[round]) grouped[round] = [];
+        grouped[round].push(r);
+    });
+
+    // Sort rounds sesuai ROUND_ORDER, lalu sisanya di belakang
+    const orderedKeys = ROUND_ORDER.filter(k => grouped[k]);
+    const extraKeys   = Object.keys(grouped).filter(k => !ROUND_ORDER.includes(k));
+    const allKeys = [...orderedKeys, ...extraKeys];
+
+    return allKeys.map(roundKey => {
+        const meta = ROUND_META[roundKey] || { label: roundKey, icon: 'fa-circle' };
+        const matches = grouped[roundKey]
+            .sort((a, b) => parseFloat(a['Match']) - parseFloat(b['Match']))
+            .map(r => {
+                const winner = r['Winner'] && r['Winner'] !== '–' && r['Winner'] !== '-' ? r['Winner'].trim() : null;
+                return {
+                    team1:  r['Team1']  || '',
+                    team2:  r['Team2']  || '',
+                    score1: r['Score1'] || '',
+                    score2: r['Score2'] || '',
+                    status: (r['Status'] || 'upcoming').toLowerCase().trim(),
+                    winner: winner
+                };
+            });
+        return { key: roundKey, label: meta.label, icon: meta.icon, matches };
+    });
 }
 
-// ═══════════════════════════════════════
-// TAB SWITCH
-// ═══════════════════════════════════════
-let curTab='ml';
-function switchTab(t){
-  curTab=t;
-  document.getElementById('sec-ml').classList.toggle('active',t==='ml');
-  document.getElementById('sec-chess').classList.toggle('active',t==='chess');
-  document.getElementById('tab-ml').classList.toggle('active',t==='ml');
-  document.getElementById('tab-chess').classList.toggle('active',t==='chess');
-  document.getElementById('scroll-hint').style.display=t==='ml'?'flex':'none';
-  if(t==='ml') updateMLStatus();
-  else updateChessStatus();
+// ============================================================
+// RENDER BRACKET
+// ============================================================
+function renderBracket(rounds) {
+    const container = document.getElementById('bracketContainer');
+
+    if (!rounds || rounds.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-10 text-sm"><i class="fas fa-inbox text-2xl mb-2 block"></i>Tidak ada data pertandingan</div>`;
+        return;
+    }
+
+    let html = '';
+
+    rounds.forEach((round, roundIdx) => {
+        html += `<div class="round-column" id="rc-${roundIdx}">`;
+        html += `<div class="round-header">
+                    <i class="fas ${round.icon}"></i> ${round.label}
+                 </div>`;
+
+        if (!round.matches.length) {
+            html += `<div class="match-slot"><div class="match-card status-upcoming" style="opacity:.5;text-align:center;padding:10px"><span class="text-xs text-gray-400">Belum ada data</span></div></div>`;
+        } else {
+            round.matches.forEach((m, mIdx) => {
+                const sc    = m.status === 'done' ? 'status-done' : m.status === 'live' ? 'status-live' : 'status-upcoming';
+                const badge = m.status === 'done' ? 'done' : m.status === 'live' ? 'live' : 'upcoming';
+                const badgeTxt = m.status === 'done' ? 'Selesai' : m.status === 'live' ? '● Live' : 'Mendatang';
+
+                const t1 = m.team1 || 'BYE';
+                const t2 = m.team2 || 'BYE';
+                const s1 = m.score1;
+                const s2 = m.score2;
+                const w  = m.winner;
+
+                const isBye1 = t1 === 'BYE';
+                const isBye2 = t2 === 'BYE';
+                const isW1 = w && w === t1;
+                const isW2 = w && w === t2;
+
+                const crown = `<i class="fas fa-crown text-yellow-500 mr-1" style="font-size:0.6rem"></i>`;
+
+                html += `
+                <div class="match-slot" id="ms-${roundIdx}-${mIdx}">
+                    <div class="h-line-left"></div>
+                    <div class="match-card ${sc}">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <span class="text-gray-400 font-semibold" style="font-size:0.55rem">M${mIdx+1}</span>
+                            <span class="status-badge ${badge}">${badgeTxt}</span>
+                        </div>
+                        <div class="team-row">
+                            <span class="team-name ${isBye1?'bye':''} ${isW1?'winner':''}" title="${t1}">
+                                ${isW1?crown:''}${t1}
+                            </span>
+                            <span class="team-score ${s1===''?'empty':''}">${s1||'–'}</span>
+                        </div>
+                        <div class="team-row">
+                            <span class="team-name ${isBye2?'bye':''} ${isW2?'winner':''}" title="${t2}">
+                                ${isW2?crown:''}${t2}
+                            </span>
+                            <span class="team-score ${s2===''?'empty':''}">${s2||'–'}</span>
+                        </div>
+                        ${w ? `<div class="winner-label"><i class="fas fa-trophy text-yellow-500 mr-1" style="font-size:0.55rem"></i>${w}</div>` : ''}
+                    </div>
+                </div>`;
+            });
+        }
+
+        html += `</div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Draw vertical bracket lines between paired matches
+    drawConnectors(rounds);
 }
 
-function updateMLStatus(){
-  const allM=ML_DATA.filter(m=>m.round!=='3rd');
-  document.getElementById('cnt-up').textContent=allM.filter(m=>m.status==='upcoming').length;
-  document.getElementById('cnt-live').textContent=allM.filter(m=>m.status==='live').length;
-  document.getElementById('cnt-done').textContent=allM.filter(m=>m.status==='done').length;
-  document.getElementById('bye-chip').innerHTML=`<div class="dot" style="background:#A78BFA"></div>BYE: Tim 1`;
-}
-function updateChessStatus(){
-  const all=[...CHESS_R1,...CHESS_QF,...CHESS_SF,...CHESS_QF2,...CHESS_F];
-  document.getElementById('cnt-up').textContent=all.filter(m=>m.status==='upcoming').length;
-  document.getElementById('cnt-live').textContent=all.filter(m=>m.status==='live').length;
-  document.getElementById('cnt-done').textContent=all.filter(m=>m.status==='done').length;
-  document.getElementById('bye-chip').innerHTML=`<div class="dot" style="background:#A78BFA"></div>BYE: M. yudhi pranata`;
+// ============================================================
+// DRAW VERTICAL CONNECTORS (lines joining pairs into next round)
+// ============================================================
+function drawConnectors(rounds) {
+    rounds.forEach((round, rIdx) => {
+        if (rIdx === rounds.length - 1) return; // no connectors from last col
+        const col = document.getElementById(`rc-${rIdx}`);
+        if (!col) return;
+        const slots = round.matches.length;
+        // Pair matches 2-by-2 → connect to one match in next round
+        for (let i = 0; i < slots; i += 2) {
+            const s1 = document.getElementById(`ms-${rIdx}-${i}`);
+            const s2 = document.getElementById(`ms-${rIdx}-${i+1}`);
+            if (!s1 || !s2) continue;
+
+            const colRect = col.getBoundingClientRect();
+            const r1 = s1.getBoundingClientRect();
+            const r2 = s2.getBoundingClientRect();
+
+            const top    = r1.top  + r1.height/2 - colRect.top;
+            const bottom = r2.top  + r2.height/2 - colRect.top;
+            const height = bottom - top;
+
+            const vLine = document.createElement('div');
+            vLine.className = 'v-line';
+            vLine.style.top    = top + 'px';
+            vLine.style.height = height + 'px';
+            col.appendChild(vLine);
+        }
+    });
 }
 
-// ═══════════════════════════════════════
+// ============================================================
+// LOAD TAB
+// ============================================================
+async function loadTab(tabName) {
+    currentTab = tabName;
+
+    // Update active tab button
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tabName);
+    });
+
+    // Show loading
+    document.getElementById('loadingArea').classList.remove('hidden');
+    document.getElementById('bracketArea').classList.add('hidden');
+    document.getElementById('errorArea').classList.add('hidden');
+
+    try {
+        const cfg = SHEET_CONFIG[tabName];
+        const csv = await fetchSheetCSV(cfg.sheetName);
+        const rows = parseCSV(csv);
+        const rounds = buildRounds(rows);
+
+        document.getElementById('loadingArea').classList.add('hidden');
+        document.getElementById('bracketArea').classList.remove('hidden');
+
+        renderBracket(rounds);
+        document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('id-ID');
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('loadingArea').classList.add('hidden');
+        document.getElementById('errorArea').classList.remove('hidden');
+        document.getElementById('errorArea').innerHTML = `
+            <div class="error-box">
+                <div class="flex items-center gap-2 font-bold mb-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Gagal memuat data
+                </div>
+                <p>${err.message}</p>
+                <p class="mt-2 text-xs text-red-500">
+                    Pastikan Google Sheets sudah di-share sebagai
+                    <strong>"Anyone with the link can view"</strong>
+                    dan nama sheet sudah sama persis.
+                </p>
+                <button onclick="loadTab(currentTab)" class="mt-3 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-1.5 rounded-lg text-xs font-semibold transition">
+                    <i class="fas fa-redo mr-1"></i>Coba Lagi
+                </button>
+            </div>`;
+    }
+}
+
+// ============================================================
 // INIT
-// ═══════════════════════════════════════
-async function refreshAll(){
-  const btn=document.getElementById('ref-btn');
-  btn.classList.add('loading');
-  try{
-    ML_DATA=await fetchML();
-  }catch(e){
-    ML_DATA=ML_FALLBACK;
-  }
-  renderML(ML_DATA);
-  renderChess();
-  if(curTab==='ml')updateMLStatus();else updateChessStatus();
-  document.getElementById('upd-time') && (document.getElementById('upd-time').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}));
-  btn.classList.remove('loading');
-}
+// ============================================================
+loadTab('Mobile Legend');
 
-window.addEventListener('DOMContentLoaded',()=>{
-  refreshAll().then(()=>{
-    const ov=document.getElementById('loading');
-    ov.style.opacity='0';
-    setTimeout(()=>ov.style.display='none',500);
-    document.getElementById('scroll-hint').style.display='flex';
-  });
-  setInterval(refreshAll,60000);
-});
+// Auto-refresh setiap 60 detik (hanya saat tab aktif)
+setInterval(() => {
+    if (!document.hidden) loadTab(currentTab);
+}, 60000);
 </script>
 </body>
 </html>
